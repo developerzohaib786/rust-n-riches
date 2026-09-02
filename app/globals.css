@@ -2,26 +2,66 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@media (prefers-color-scheme: dark) {
+@layer base {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    /* Zain Super Store design system */
+    --primary: #1e5c3a;
+    --primary-light: #2e8b57;
+    --primary-foreground: #ffffff;
+
+    --accent: #f5a623;
+    --accent-foreground: #1a1a1a;
+
+    --danger: #dc2626;
+    --danger-foreground: #ffffff;
+
+    --success: #16a34a;
+    --success-foreground: #ffffff;
+
+    --background: #f8faf9;
+    --foreground: #1a1a1a;
+
+    --surface: #ffffff;
+    --card: #ffffff;
+    --card-foreground: #1a1a1a;
+
+    --popover: #ffffff;
+    --popover-foreground: #1a1a1a;
+
+    --secondary: #eef2f0;
+    --secondary-foreground: #1e5c3a;
+
+    --muted: #eef2f0;
+    --muted-foreground: #6b7280;
+
+    --text-primary: #1a1a1a;
+    --text-secondary: #6b7280;
+
+    --border: #e5e7eb;
+    --input: #e5e7eb;
+    --ring: #1e5c3a;
+
+    /* destructive mirrors danger for shadcn/ui component compatibility */
+    --destructive: #dc2626;
+    --destructive-foreground: #ffffff;
+
+    --radius: 0.75rem;
+  }
+
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-text-primary;
   }
 }
 
-body {
-  color: var(--foreground);
-  background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
-}
-
-@layer utilities {
-  .text-balance {
-    text-wrap: balance;
+@layer base {
+  h1,
+  h2,
+  h3,
+  h4 {
+    @apply font-semibold tracking-tight;
   }
 }

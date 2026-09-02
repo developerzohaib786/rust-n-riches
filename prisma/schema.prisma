@@ -1,0 +1,73 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Admin {
+  id        String   @id @default(cuid())
+  name      String
+  email     String   @unique
+  password  String
+  createdAt DateTime @default(now())
+}
+
+model Category {
+  id       String    @id @default(cuid())
+  name     String
+  products Product[]
+}
+
+model Product {
+  id          String   @id @default(cuid())
+  name        String
+  description String?
+  price       Float
+  unit        String   // kg, packet, dozen, litre etc.
+  stock       Int      @default(0)
+  imageUrl    String?
+  categoryId  String
+  category    Category @relation(fields: [categoryId], references: [id])
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Customer {
+  id           String        @id @default(cuid())
+  name         String
+  phone        String        @unique
+  address      String?
+  photoUrl     String?
+  totalDue     Float         @default(0)
+  createdAt    DateTime      @default(now())
+  transactions Transaction[]
+}
+
+model Transaction {
+  id         String          @id @default(cuid())
+  customerId String
+  customer   Customer        @relation(fields: [customerId], references: [id])
+  type       TransactionType // CREDIT (item given on khata) or PAYMENT (customer paid)
+  amount     Float
+  note       String?
+  items      String?         // optional: what was taken on credit
+  createdAt  DateTime        @default(now())
+}
+
+enum TransactionType {
+  CREDIT
+  PAYMENT
+}
+
+// Singleton row (fixed id "store") holding the public-facing store profile.
+model StoreSettings {
+  id        String   @id @default("store")
+  name      String   @default("Zain Super Store")
+  logoUrl   String?
+  address   String?
+  updatedAt DateTime @updatedAt
+}
