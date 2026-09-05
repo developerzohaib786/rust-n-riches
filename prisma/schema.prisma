@@ -22,18 +22,19 @@ model Category {
 }
 
 model Product {
-  id          String   @id @default(cuid())
+  id          String     @id @default(cuid())
   name        String
   description String?
   price       Float
-  unit        String   // kg, packet, dozen, litre etc.
-  stock       Int      @default(0)
+  unit        String     // kg, packet, dozen, litre etc.
+  stock       Int        @default(0)
   imageUrl    String?
   categoryId  String
-  category    Category @relation(fields: [categoryId], references: [id])
-  isActive    Boolean  @default(true)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  category    Category   @relation(fields: [categoryId], references: [id])
+  isActive    Boolean    @default(true)
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+  billItems   BillItem[]
 }
 
 model Customer {
@@ -61,6 +62,29 @@ model Transaction {
 enum TransactionType {
   CREDIT
   PAYMENT
+}
+
+// Walk-in / instant sale, settled immediately (not added to a customer's khata).
+model Bill {
+  id           String     @id @default(cuid())
+  billNumber   Int        @default(autoincrement())
+  customerName String?
+  totalAmount  Float
+  items        BillItem[]
+  createdAt    DateTime   @default(now())
+}
+
+model BillItem {
+  id        String  @id @default(cuid())
+  billId    String
+  bill      Bill    @relation(fields: [billId], references: [id], onDelete: Cascade)
+  productId String
+  product   Product @relation(fields: [productId], references: [id])
+  name      String  // snapshot of the product name at time of sale
+  unit      String  // snapshot of the product unit at time of sale
+  price     Float   // snapshot of the unit price at time of sale
+  quantity  Int
+  total     Float
 }
 
 // Singleton row (fixed id "store") holding the public-facing store profile.

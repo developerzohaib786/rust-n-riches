@@ -217,7 +217,7 @@ export function ProductForm({ mode, productId, categories: initialCategories, de
                   <FormItem>
                     <FormLabel>Unit</FormLabel>
                     <FormControl>
-                      <Input placeholder="kg, packet, dozen, litre..." {...field} />
+                      <Input placeholder="kg, litre, dozen, packet, item,..." {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>

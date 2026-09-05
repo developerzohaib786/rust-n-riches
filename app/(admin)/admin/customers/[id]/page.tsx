@@ -13,10 +13,16 @@ export default async function CustomerKhataLedgerPage({
   const customer = await prisma.customer.findUnique({ where: { id: params.id } });
   if (!customer) notFound();
 
-  const transactions = await prisma.transaction.findMany({
-    where: { customerId: params.id },
-    orderBy: { createdAt: "asc" },
-  });
+  const [transactions, products] = await Promise.all([
+    prisma.transaction.findMany({
+      where: { customerId: params.id },
+      orderBy: { createdAt: "asc" },
+    }),
+    prisma.product.findMany({
+      where: { isActive: true },
+      orderBy: { name: "asc" },
+    }),
+  ]);
 
   let running = 0;
   const withBalance = transactions.map((tx) => {
@@ -44,6 +50,13 @@ export default async function CustomerKhataLedgerPage({
           totalDue: customer.totalDue,
         }}
         transactions={withBalance.reverse()}
+        products={products.map((p) => ({
+          id: p.id,
+          name: p.name,
+          price: p.price,
+          unit: p.unit,
+          stock: p.stock,
+        }))}
       />
     </div>
   );

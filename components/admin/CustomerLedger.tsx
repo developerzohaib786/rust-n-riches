@@ -11,6 +11,7 @@ import {
   TransactionFormDialog,
   type TransactionRecord,
   type TransactionCustomerRecord,
+  type TransactionProductOption,
 } from "@/components/admin/TransactionFormDialog";
 import { PaymentReminderDialog } from "@/components/admin/PaymentReminderDialog";
 import { dueBadgeVariant } from "@/lib/utils";
@@ -27,9 +28,14 @@ export interface CustomerLedgerData {
 interface CustomerLedgerProps {
   customer: CustomerLedgerData;
   transactions: KhataTransaction[];
+  products: TransactionProductOption[];
 }
 
-export function CustomerLedger({ customer: initialCustomer, transactions: initialTransactions }: CustomerLedgerProps) {
+export function CustomerLedger({
+  customer: initialCustomer,
+  transactions: initialTransactions,
+  products,
+}: CustomerLedgerProps) {
   const [customer, setCustomer] = useState(initialCustomer);
   const [transactions, setTransactions] = useState(initialTransactions);
   const [dialogType, setDialogType] = useState<"CREDIT" | "PAYMENT" | null>(null);
@@ -125,6 +131,7 @@ export function CustomerLedger({ customer: initialCustomer, transactions: initia
           type={dialogType}
           customerId={customer.id}
           currentDue={customer.totalDue}
+          products={products}
           onSaved={handleSaved}
         />
       )}

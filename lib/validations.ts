@@ -29,6 +29,15 @@ export const categorySchema = z.object({
 
 export type CategoryInput = z.infer<typeof categorySchema>;
 
+export const stockUpdateSchema = z.object({
+  stock: z
+    .number({ message: "Enter a valid stock quantity" })
+    .int()
+    .nonnegative("Stock cannot be negative"),
+});
+
+export type StockUpdateInput = z.infer<typeof stockUpdateSchema>;
+
 export const customerSchema = z.object({
   name: z.string().min(1, "Customer name is required"),
   phone: z.string().min(10, "Enter a valid phone number"),
@@ -38,6 +47,15 @@ export const customerSchema = z.object({
 
 export type CustomerInput = z.infer<typeof customerSchema>;
 
+export const transactionProductItemSchema = z.object({
+  productId: z.string().min(1),
+  name: z.string().min(1),
+  quantity: z.number().int().positive(),
+  price: z.number().nonnegative(),
+});
+
+export type TransactionProductItemInput = z.infer<typeof transactionProductItemSchema>;
+
 export const transactionSchema = z.object({
   customerId: z.string().min(1, "Customer is required"),
   type: z.enum(["CREDIT", "PAYMENT"]),
@@ -45,9 +63,24 @@ export const transactionSchema = z.object({
   note: z.string().optional(),
   items: z.string().optional(),
   date: z.string().min(1, "Date is required"),
+  productItems: z.array(transactionProductItemSchema).optional(),
 });
 
 export type TransactionInput = z.infer<typeof transactionSchema>;
+
+export const billItemInputSchema = z.object({
+  productId: z.string().min(1),
+  quantity: z.number().int().positive("Quantity must be at least 1"),
+});
+
+export type BillItemInput = z.infer<typeof billItemInputSchema>;
+
+export const billSchema = z.object({
+  customerName: z.string().optional(),
+  items: z.array(billItemInputSchema).min(1, "Add at least one item to the bill"),
+});
+
+export type BillInput = z.infer<typeof billSchema>;
 
 export const storeSettingsSchema = z.object({
   name: z.string().min(1, "Store name is required"),

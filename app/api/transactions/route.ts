@@ -36,7 +36,7 @@ export async function POST(request: Request) {
     );
   }
 
-  const { customerId, type, amount, note, items, date } = parsed.data;
+  const { customerId, type, amount, note, items, date, productItems } = parsed.data;
 
   try {
     const result = await prisma.$transaction(async (tx) => {
@@ -50,6 +50,33 @@ export async function POST(request: Request) {
           400,
           `Payment cannot exceed the current due amount of ₹${customer.totalDue.toFixed(2)}`
         );
+      }
+
+      if (type === "CREDIT" && productItems && productItems.length > 0) {
+        const dbProducts = await tx.product.findMany({
+          where: { id: { in: productItems.map((item) => item.productId) } },
+        });
+        const productsById = new Map(dbProducts.map((p) => [p.id, p]));
+
+        for (const item of productItems) {
+          const product = productsById.get(item.productId);
+          if (!product) {
+            throw new ApiError(400, `Product not found: ${item.name}`);
+          }
+          if (product.stock < item.quantity) {
+            throw new ApiError(
+              400,
+              `Not enough stock for ${product.name} (only ${product.stock} ${product.unit} left)`
+            );
+          }
+        }
+
+        for (const item of productItems) {
+          await tx.product.update({
+            where: { id: item.productId },
+            data: { stock: { decrement: item.quantity } },
+          });
+        }
       }
 
       const transaction = await tx.transaction.create({
@@ -72,7 +99,7 @@ export async function POST(request: Request) {
       });
 
       return { transaction, customer: updatedCustomer };
-    });
+    }, { timeout: 20000 });
 
     return NextResponse.json(result, { status: 201 });
   } catch (err) {

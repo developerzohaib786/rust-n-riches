@@ -5,6 +5,9 @@ import { usePathname } from "next/navigation";
 import {
   LayoutDashboard,
   Package,
+  Tag,
+  Boxes,
+  Zap,
   Users,
   Receipt,
   Settings,
@@ -16,7 +19,10 @@ import { cn } from "@/lib/utils";
 
 export const NAV_ITEMS = [
   { label: "Dashboard", href: "/admin/dashboard", icon: LayoutDashboard },
+  { label: "Instant Billing", href: "/admin/billing", icon: Zap },
   { label: "Products", href: "/admin/products", icon: Package },
+  { label: "Categories", href: "/admin/categories", icon: Tag },
+  { label: "Stock", href: "/admin/stock", icon: Boxes },
   { label: "Customers", href: "/admin/customers", icon: Users },
   { label: "Transactions/Khata", href: "/admin/transactions", icon: Receipt },
   { label: "Settings", href: "/admin/settings", icon: Settings },

@@ -14,8 +14,11 @@ import {
 
 const PAGE_TITLES: Record<string, string> = {
   "/admin/dashboard": "Dashboard",
+  "/admin/billing": "Instant Billing",
   "/admin/products": "Products",
   "/admin/products/new": "Add Product",
+  "/admin/categories": "Categories",
+  "/admin/stock": "Stock",
   "/admin/customers": "Customers",
   "/admin/transactions": "Transactions/Khata",
   "/admin/settings": "Settings",

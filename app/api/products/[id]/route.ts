@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 
 import { prisma } from "@/lib/prisma";
-import { productSchema } from "@/lib/validations";
+import { productSchema, stockUpdateSchema } from "@/lib/validations";
 
 export async function GET(_request: Request, { params }: { params: { id: string } }) {
   const product = await prisma.product.findUnique({
@@ -32,6 +32,28 @@ export async function PUT(request: Request, { params }: { params: { id: string }
       where: { id: params.id },
       data: parsed.data,
       include: { category: true },
+    });
+    return NextResponse.json(product);
+  } catch {
+    return NextResponse.json({ message: "Product not found" }, { status: 404 });
+  }
+}
+
+export async function PATCH(request: Request, { params }: { params: { id: string } }) {
+  const body = await request.json();
+  const parsed = stockUpdateSchema.safeParse(body);
+
+  if (!parsed.success) {
+    return NextResponse.json(
+      { message: parsed.error.issues[0]?.message ?? "Invalid stock value" },
+      { status: 400 }
+    );
+  }
+
+  try {
+    const product = await prisma.product.update({
+      where: { id: params.id },
+      data: { stock: parsed.data.stock },
     });
     return NextResponse.json(product);
   } catch {
