@@ -1,4 +1,4 @@
-# Zain Super Store Platform
+# Zain Super Store Platform 
 
 A Next.js 14 (App Router) admin + public storefront for managing a kiryana (grocery) store's product catalog and customer khata (credit ledger).
 
