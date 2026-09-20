@@ -32,6 +32,7 @@ import {
 } from "@/components/ui/dialog";
 import { useToast } from "@/components/ui/use-toast";
 import { EmptyState } from "@/components/ui/empty-state";
+import { formatPrice } from "@/lib/utils";
 
 export interface ProductRow {
   id: string;
@@ -177,7 +178,7 @@ export function ProductsTable({ initialProducts, categories }: ProductsTableProp
                   <TableCell className="font-medium">{product.name}</TableCell>
                   <TableCell className="text-text-secondary">{product.category.name}</TableCell>
                   <TableCell>
-                    ₹{product.price.toFixed(2)} / {product.unit}
+                    {formatPrice(product.price)} / {product.unit}
                   </TableCell>
                   <TableCell>{product.stock}</TableCell>
                   <TableCell>

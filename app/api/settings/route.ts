@@ -26,10 +26,19 @@ export async function PUT(request: Request) {
     );
   }
 
+  const data = {
+    ...parsed.data,
+    logoUrl: parsed.data.logoUrl || null,
+    address: parsed.data.address || null,
+    phone: parsed.data.phone || null,
+    email: parsed.data.email || null,
+    whatsapp: parsed.data.whatsapp || null,
+  };
+
   const settings = await prisma.storeSettings.upsert({
     where: { id: STORE_SETTINGS_ID },
-    update: parsed.data,
-    create: { id: STORE_SETTINGS_ID, ...parsed.data },
+    update: data,
+    create: { id: STORE_SETTINGS_ID, ...data },
   });
 
   return NextResponse.json(settings);

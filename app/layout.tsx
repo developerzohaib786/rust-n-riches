@@ -9,8 +9,8 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "Zain Super Store Platform",
-  description: "Khata management for your kiryana store, track customer credit, payments, and inventory.",
+  title: { default: "Rust N Riches", template: "%s | Rust N Riches" },
+  description: "Shop online at Rust N Riches. Fresh groceries and everyday essentials delivered to your door with cash on delivery.",
 };
 
 export default function RootLayout({

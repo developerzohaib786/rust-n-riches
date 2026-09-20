@@ -1,14 +1,26 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowLeft, Package } from "lucide-react";
 
 import { prisma } from "@/lib/prisma";
 import { Badge } from "@/components/ui/badge";
+import { AddToCartButton } from "@/components/public/AddToCartButton";
+import { formatPrice } from "@/lib/utils";
 
 export const dynamic = "force-dynamic";
 
 interface ProductDetailPageProps {
   params: { id: string };
+}
+
+export async function generateMetadata({ params }: ProductDetailPageProps): Promise<Metadata> {
+  const product = await prisma.product.findFirst({
+    where: { id: params.id, isActive: true },
+    select: { name: true, description: true },
+  });
+  if (!product) return { title: "Product not found" };
+  return { title: product.name, description: product.description ?? undefined };
 }
 
 export default async function ProductDetailPage({ params }: ProductDetailPageProps) {
@@ -54,7 +66,7 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
 
           <div className="flex items-center gap-3">
             <p className="text-2xl font-semibold text-text-primary">
-              ₹{product.price.toFixed(2)}
+              {formatPrice(product.price)}
               <span className="ml-1 text-base font-normal text-text-secondary">
                 / {product.unit}
               </span>
@@ -69,6 +81,20 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
           {product.description && (
             <p className="text-base text-text-secondary">{product.description}</p>
           )}
+
+          <div className="mt-2">
+            <AddToCartButton
+              variant="full"
+              product={{
+                productId: product.id,
+                name: product.name,
+                price: product.price,
+                unit: product.unit,
+                imageUrl: product.imageUrl,
+                stock: product.stock,
+              }}
+            />
+          </div>
         </div>
       </div>
     </div>

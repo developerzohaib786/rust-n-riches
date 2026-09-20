@@ -67,7 +67,7 @@ function LoginForm() {
         <CardHeader className="items-center text-center">
           <Store className="h-8 w-8 text-primary" />
           <CardTitle>Admin Login</CardTitle>
-          <CardDescription>Sign in to manage your kiryana store.</CardDescription>
+          <CardDescription>Sign in to manage your online store.</CardDescription>
         </CardHeader>
         <CardContent>
           <Form {...form}>
@@ -79,7 +79,7 @@ function LoginForm() {
                   <FormItem>
                     <FormLabel>Email</FormLabel>
                     <FormControl>
-                      <Input type="email" placeholder="admin@kiryanakhata.com" {...field} />
+                      <Input type="email" placeholder="admin@example.com" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>

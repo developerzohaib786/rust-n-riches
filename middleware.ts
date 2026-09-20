@@ -22,10 +22,8 @@ export const config = {
   matcher: [
     "/admin/:path*",
     "/api/products/:path*",
-    "/api/customers/:path*",
-    "/api/transactions/:path*",
     "/api/categories/:path*",
-    "/api/bills/:path*",
+    "/api/orders/:path*",
     "/api/settings/:path*",
   ],
 };

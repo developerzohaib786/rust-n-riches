@@ -22,76 +22,86 @@ model Category {
 }
 
 model Product {
-  id          String     @id @default(cuid())
+  id          String      @id @default(cuid())
   name        String
   description String?
   price       Float
-  unit        String     // kg, packet, dozen, litre etc.
-  stock       Int        @default(0)
+  unit        String      // kg, packet, dozen, litre etc.
+  stock       Int         @default(0)
   imageUrl    String?
   categoryId  String
-  category    Category   @relation(fields: [categoryId], references: [id])
-  isActive    Boolean    @default(true)
-  createdAt   DateTime   @default(now())
-  updatedAt   DateTime   @updatedAt
-  billItems   BillItem[]
+  category    Category    @relation(fields: [categoryId], references: [id])
+  isActive    Boolean     @default(true)
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+  orderItems  OrderItem[]
 }
 
-model Customer {
-  id           String        @id @default(cuid())
-  name         String
-  phone        String        @unique
-  address      String?
-  photoUrl     String?
-  totalDue     Float         @default(0)
-  createdAt    DateTime      @default(now())
-  transactions Transaction[]
+enum OrderStatus {
+  PENDING
+  CONFIRMED
+  SHIPPED
+  DELIVERED
+  CANCELLED
 }
 
-model Transaction {
-  id         String          @id @default(cuid())
-  customerId String
-  customer   Customer        @relation(fields: [customerId], references: [id])
-  type       TransactionType // CREDIT (item given on khata) or PAYMENT (customer paid)
-  amount     Float
-  note       String?
-  items      String?         // optional: what was taken on credit
-  createdAt  DateTime        @default(now())
+enum PaymentMethod {
+  COD
 }
 
-enum TransactionType {
-  CREDIT
-  PAYMENT
+enum PaymentStatus {
+  UNPAID
+  PAID
 }
 
-// Walk-in / instant sale, settled immediately (not added to a customer's khata).
-model Bill {
-  id           String     @id @default(cuid())
-  billNumber   Int        @default(autoincrement())
-  customerName String?
-  totalAmount  Float
-  items        BillItem[]
-  createdAt    DateTime   @default(now())
+// A guest order placed through the storefront checkout.
+model Order {
+  id            String        @id @default(cuid()) // unguessable; used as the confirmation page token
+  orderNumber   Int           @default(autoincrement()) // customer-facing number
+  customerName  String
+  phone         String
+  email         String?
+  address       String
+  city          String
+  notes         String?
+  status        OrderStatus   @default(PENDING)
+  paymentMethod PaymentMethod @default(COD)
+  paymentStatus PaymentStatus @default(UNPAID)
+  subtotal      Float
+  shippingFee   Float         @default(0)
+  total         Float
+  items         OrderItem[]
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+
+  @@index([status])
+  @@index([createdAt])
+  @@index([phone])
 }
 
-model BillItem {
+model OrderItem {
   id        String  @id @default(cuid())
-  billId    String
-  bill      Bill    @relation(fields: [billId], references: [id], onDelete: Cascade)
+  orderId   String
+  order     Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
   productId String
   product   Product @relation(fields: [productId], references: [id])
-  name      String  // snapshot of the product name at time of sale
-  unit      String  // snapshot of the product unit at time of sale
-  price     Float   // snapshot of the unit price at time of sale
+  name      String  // snapshot of the product name at time of order
+  unit      String  // snapshot of the product unit at time of order
+  price     Float   // snapshot of the unit price at time of order
   quantity  Int
   total     Float
 }
 
 // Singleton row (fixed id "store") holding the public-facing store profile.
 model StoreSettings {
-  id        String   @id @default("store")
-  name      String   @default("Zain Super Store")
-  logoUrl   String?
-  address   String?
-  updatedAt DateTime @updatedAt
+  id                    String   @id @default("store")
+  name                  String   @default("Rust N Riches")
+  logoUrl               String?
+  address               String?
+  phone                 String?
+  email                 String?
+  whatsapp              String?
+  shippingFee           Float    @default(0)
+  freeShippingThreshold Float?
+  updatedAt             DateTime @updatedAt
 }

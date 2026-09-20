@@ -18,7 +18,7 @@ export default async function AdminSettingsPage() {
         Settings
       </h1>
       <p className="mt-1 text-sm text-text-secondary">
-        Store profile shown on your public website.
+        Store profile, contact details and delivery charges shown on your online store.
       </p>
 
       <div className="mt-6 max-w-2xl">
@@ -27,6 +27,11 @@ export default async function AdminSettingsPage() {
             name: settings.name,
             logoUrl: settings.logoUrl ?? "",
             address: settings.address ?? "",
+            phone: settings.phone ?? "",
+            email: settings.email ?? "",
+            whatsapp: settings.whatsapp ?? "",
+            shippingFee: settings.shippingFee,
+            freeShippingThreshold: settings.freeShippingThreshold,
           }}
         />
       </div>

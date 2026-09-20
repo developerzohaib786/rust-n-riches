@@ -10,7 +10,7 @@ html {
 
 @layer base {
   :root {
-    /* Zain Super Store design system */
+    /* Rust N Riches design system */
     --primary: #1e5c3a;
     --primary-light: #2e8b57;
     --primary-foreground: #ffffff;

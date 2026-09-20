@@ -1,6 +1,12 @@
-# Zain Super Store Platform 
+# Rust N Riches Platform 
 
-A Next.js 14 (App Router) admin + public storefront for managing a kiryana (grocery) store's product catalog and customer khata (credit ledger).
+A Next.js 14 (App Router) e-commerce store with an admin panel. Customers browse products, fill a cart and check out as guests (Cash on Delivery, prices in PKR). The store owner manages products, stock and incoming orders from `/admin`.
+
+## Features
+
+- **Storefront:** product catalog with search and category filter, cart (saved in the browser), guest checkout, order confirmation page, order tracking by order number + phone, and a contact page.
+- **Checkout safety:** prices and stock are always re-checked on the server; stock is decremented atomically so the last units can't be oversold; a honeypot field and a per-IP rate limit slow down bots.
+- **Admin:** dashboard (pending orders, revenue, low stock), order management (Pending → Confirmed → Shipped → Delivered, or Cancelled which returns stock), products, categories, stock, and store settings (contact details, delivery charges, free-delivery threshold).
 
 ## Stack
 
@@ -40,12 +46,9 @@ A Next.js 14 (App Router) admin + public storefront for managing a kiryana (groc
    npm run db:seed
    ```
 
-   This creates one `Admin` row you can log in with at `/admin/login`. By default:
+   This creates one `Admin` row you can log in with at `/admin/login`. Set `SEED_ADMIN_EMAIL`, `SEED_ADMIN_PASSWORD` and `SEED_ADMIN_NAME` in `.env` before running the seed to choose your own credentials; if you leave them unset the fallbacks in `prisma/seed.ts` are used (and the seed prints a reminder to change the password).
 
-   - Email: `admin@kiryanakhata.com`
-   - Password: `khata@admin123`
-
-   Override these by setting `SEED_ADMIN_EMAIL`, `SEED_ADMIN_PASSWORD`, and `SEED_ADMIN_NAME` before running the seed. **Change the password after your first login** if you used the default.
+   To also add a few demo categories and products for local testing, run the seed with `SEED_DEMO=true` (for example `SEED_DEMO=true npm run db:seed`, or `$env:SEED_DEMO="true"; npm run db:seed` in PowerShell).
 
 5. Start the dev server:
 
@@ -67,6 +70,7 @@ Set these in `.env` locally, and in your hosting provider's project settings for
 | `SEED_ADMIN_EMAIL` | No | Overrides the email used by `npm run db:seed`. |
 | `SEED_ADMIN_PASSWORD` | No | Overrides the password used by `npm run db:seed`. |
 | `SEED_ADMIN_NAME` | No | Overrides the admin's display name used by `npm run db:seed`. |
+| `SEED_DEMO` | No | Set to `true` to seed demo categories and products with `npm run db:seed`. |
 
 `.env` is git-ignored — never commit real credentials.
 
@@ -74,20 +78,20 @@ Set these in `.env` locally, and in your hosting provider's project settings for
 
 ```
 app/
-  (public)/        Public storefront — home, product catalog, product detail
-  (admin)/admin/   Admin panel — dashboard, products, customers, khata ledger, transactions, settings
-  api/              Route handlers (Prisma-backed REST endpoints)
+  (public)/        Storefront — home, products, product detail, cart, checkout, order confirmation, track order, contact
+  (admin)/admin/   Admin panel — dashboard, orders, products, categories, stock, settings
+  api/              Route handlers. Public: /api/checkout, /api/cart/refresh. Everything else requires an admin session.
 components/
   ui/               shadcn/ui primitives
   admin/            Admin-only composite components (tables, forms, dialogs, widgets)
   public/           Public-site components
-lib/                Prisma client, next-auth config, zod schemas, shared utils
+lib/                Prisma client, next-auth config, zod schemas, cart context, price/order helpers
 prisma/             Schema + seed script
 ```
 
 ## Authentication
 
-Admin routes (`/admin/*`, excluding `/admin/login`) are protected by `middleware.ts`, which redirects unauthenticated requests to the login page. Credentials are checked against the `Admin` table with bcrypt-hashed passwords — see `lib/auth.ts`.
+Admin routes (`/admin/*`, excluding `/admin/login`) and the admin API routes (`/api/products`, `/api/categories`, `/api/orders`, `/api/settings`) are protected by `middleware.ts`, which redirects unauthenticated requests to the login page. Credentials are checked against the `Admin` table with bcrypt-hashed passwords — see `lib/auth.ts`. Customers do not have accounts; the public checkout endpoints (`/api/checkout`, `/api/cart/refresh`) are deliberately outside the middleware matcher.
 
 ## Deploying to Vercel
 
@@ -107,5 +111,7 @@ This is a standard Next.js app, so Vercel's zero-config Next.js preset handles t
 
 ## Notes
 
-- Image "uploads" (product photos, customer photos, store logo) are MVP placeholders: you can paste an image URL, or pick a local file to preview it as a temporary blob URL. Neither is persisted to real storage yet — wiring up something like Vercel Blob or S3 is the natural next step.
-- WhatsApp payment reminders use a `wa.me` deep link (no API integration). See the comment block in `components/admin/PaymentReminderDialog.tsx` for the upgrade path to the WhatsApp Cloud API.
+- Image "uploads" (product photos, store logo) are MVP placeholders: you can paste an image URL, or pick a local file to preview it as a temporary blob URL. Neither is persisted to real storage yet — wiring up something like Vercel Blob or S3 is the natural next step. Until then, paste image URLs for product photos.
+- Payment is Cash on Delivery only. `PaymentMethod` is an enum on the `Order` model so an online gateway can be added later.
+- The checkout rate limiter (`lib/rate-limit.ts`) is in-memory and per server instance; use a shared store such as Redis if you need hard limits on serverless hosting.
+- WhatsApp links (order confirmation, "WhatsApp Customer" in the admin) use plain `wa.me` deep links, with no API integration.

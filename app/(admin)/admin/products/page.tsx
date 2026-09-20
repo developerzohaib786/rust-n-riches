@@ -18,7 +18,7 @@ export default async function AdminProductsPage() {
         Products
       </h1>
       <p className="mt-1 text-sm text-text-secondary">
-        Manage your kiryana store&apos;s product catalog.
+        Manage the products in your online store.
       </p>
 
       <div className="mt-6">

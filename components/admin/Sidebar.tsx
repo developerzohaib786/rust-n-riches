@@ -7,9 +7,7 @@ import {
   Package,
   Tag,
   Boxes,
-  Zap,
-  Users,
-  Receipt,
+  ShoppingBag,
   Settings,
   Store,
   X,
@@ -19,12 +17,10 @@ import { cn } from "@/lib/utils";
 
 export const NAV_ITEMS = [
   { label: "Dashboard", href: "/admin/dashboard", icon: LayoutDashboard },
-  { label: "Instant Billing", href: "/admin/billing", icon: Zap },
+  { label: "Orders", href: "/admin/orders", icon: ShoppingBag },
   { label: "Products", href: "/admin/products", icon: Package },
   { label: "Categories", href: "/admin/categories", icon: Tag },
   { label: "Stock", href: "/admin/stock", icon: Boxes },
-  { label: "Customers", href: "/admin/customers", icon: Users },
-  { label: "Transactions/Khata", href: "/admin/transactions", icon: Receipt },
   { label: "Settings", href: "/admin/settings", icon: Settings },
 ];
 
@@ -48,7 +44,7 @@ export function Sidebar({ open, onClose }: SidebarProps) {
 
       <aside
         className={cn(
-          "fixed inset-y-0 left-0 z-50 flex w-[260px] flex-col border-r border-border bg-surface transition-transform md:sticky md:top-0 md:h-screen md:translate-x-0",
+          "fixed inset-y-0 left-0 z-50 flex w-[260px] print:hidden flex-col border-r border-border bg-surface transition-transform md:sticky md:top-0 md:h-screen md:translate-x-0",
           open ? "translate-x-0" : "-translate-x-full"
         )}
       >
@@ -56,7 +52,7 @@ export function Sidebar({ open, onClose }: SidebarProps) {
           <div className="flex items-center gap-2">
             <Store className="h-5 w-5 text-primary" />
             <span className="text-sm font-semibold tracking-tight text-text-primary">
-              Zain Super Store
+              Rust N Riches
             </span>
           </div>
           <button

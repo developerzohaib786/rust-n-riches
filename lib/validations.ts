@@ -38,54 +38,87 @@ export const stockUpdateSchema = z.object({
 
 export type StockUpdateInput = z.infer<typeof stockUpdateSchema>;
 
-export const customerSchema = z.object({
-  name: z.string().min(1, "Customer name is required"),
-  phone: z.string().min(10, "Enter a valid phone number"),
-  address: z.string().optional(),
-  photoUrl: z.string().optional().or(z.literal("")),
-});
+export const CHECKOUT_MAX_LINES = 50;
+export const CHECKOUT_MAX_QUANTITY = 99;
 
-export type CustomerInput = z.infer<typeof customerSchema>;
+const phoneSchema = z
+  .string()
+  .trim()
+  .refine((value) => /^\+?[\d\s-]{10,16}$/.test(value), "Enter a valid phone number");
 
-export const transactionProductItemSchema = z.object({
+export const checkoutItemSchema = z.object({
   productId: z.string().min(1),
-  name: z.string().min(1),
-  quantity: z.number().int().positive(),
-  price: z.number().nonnegative(),
+  quantity: z
+    .number()
+    .int()
+    .positive("Quantity must be at least 1")
+    .max(CHECKOUT_MAX_QUANTITY, `You can order at most ${CHECKOUT_MAX_QUANTITY} of one item`),
 });
 
-export type TransactionProductItemInput = z.infer<typeof transactionProductItemSchema>;
+export type CheckoutItemInput = z.infer<typeof checkoutItemSchema>;
 
-export const transactionSchema = z.object({
-  customerId: z.string().min(1, "Customer is required"),
-  type: z.enum(["CREDIT", "PAYMENT"]),
-  amount: z.number({ message: "Enter a valid amount" }).positive("Amount must be greater than 0"),
-  note: z.string().optional(),
-  items: z.string().optional(),
-  date: z.string().min(1, "Date is required"),
-  productItems: z.array(transactionProductItemSchema).optional(),
+// The form fields shown on the checkout page (no cart items, those come from the cart).
+export const checkoutFormSchema = z.object({
+  customerName: z.string().trim().min(2, "Enter your full name"),
+  phone: phoneSchema,
+  email: z.string().trim().email("Enter a valid email address").optional().or(z.literal("")),
+  address: z.string().trim().min(5, "Enter your full delivery address"),
+  city: z.string().trim().min(2, "Enter your city"),
+  notes: z.string().trim().max(500, "Notes are too long").optional(),
 });
 
-export type TransactionInput = z.infer<typeof transactionSchema>;
+export type CheckoutFormInput = z.infer<typeof checkoutFormSchema>;
 
-export const billItemInputSchema = z.object({
-  productId: z.string().min(1),
-  quantity: z.number().int().positive("Quantity must be at least 1"),
+export const checkoutSchema = checkoutFormSchema.extend({
+  items: z
+    .array(checkoutItemSchema)
+    .min(1, "Your cart is empty")
+    .max(CHECKOUT_MAX_LINES, "Too many items in the cart"),
+  // Honeypot: real users never fill this in, bots often do.
+  website: z.string().max(0).optional(),
 });
 
-export type BillItemInput = z.infer<typeof billItemInputSchema>;
+export type CheckoutInput = z.infer<typeof checkoutSchema>;
 
-export const billSchema = z.object({
-  customerName: z.string().optional(),
-  items: z.array(billItemInputSchema).min(1, "Add at least one item to the bill"),
+export const cartRefreshSchema = z.object({
+  productIds: z.array(z.string().min(1)).min(1).max(CHECKOUT_MAX_LINES),
 });
 
-export type BillInput = z.infer<typeof billSchema>;
+export const orderLookupSchema = z.object({
+  orderNumber: z
+    .string()
+    .trim()
+    .regex(/^#?\d+$/, "Enter a valid order number"),
+  phone: phoneSchema,
+});
+
+export type OrderLookupInput = z.infer<typeof orderLookupSchema>;
+
+export const orderUpdateSchema = z
+  .object({
+    status: z.enum(["PENDING", "CONFIRMED", "SHIPPED", "DELIVERED", "CANCELLED"]).optional(),
+    paymentStatus: z.enum(["UNPAID", "PAID"]).optional(),
+  })
+  .refine((v) => v.status !== undefined || v.paymentStatus !== undefined, {
+    message: "Nothing to update",
+  });
+
+export type OrderUpdateInput = z.infer<typeof orderUpdateSchema>;
 
 export const storeSettingsSchema = z.object({
   name: z.string().min(1, "Store name is required"),
   logoUrl: z.string().optional().or(z.literal("")),
   address: z.string().optional(),
+  phone: z.string().optional(),
+  email: z.string().email("Enter a valid email address").optional().or(z.literal("")),
+  whatsapp: z.string().optional(),
+  shippingFee: z
+    .number({ message: "Enter a valid shipping fee" })
+    .nonnegative("Shipping fee cannot be negative"),
+  freeShippingThreshold: z
+    .number({ message: "Enter a valid amount" })
+    .nonnegative("Amount cannot be negative")
+    .nullable(),
 });
 
 export type StoreSettingsInput = z.infer<typeof storeSettingsSchema>;

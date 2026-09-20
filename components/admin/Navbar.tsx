@@ -14,20 +14,18 @@ import {
 
 const PAGE_TITLES: Record<string, string> = {
   "/admin/dashboard": "Dashboard",
-  "/admin/billing": "Instant Billing",
+  "/admin/orders": "Orders",
   "/admin/products": "Products",
   "/admin/products/new": "Add Product",
   "/admin/categories": "Categories",
   "/admin/stock": "Stock",
-  "/admin/customers": "Customers",
-  "/admin/transactions": "Transactions/Khata",
   "/admin/settings": "Settings",
 };
 
 function getPageTitle(pathname: string | null) {
   if (!pathname) return "Admin";
   if (PAGE_TITLES[pathname]) return PAGE_TITLES[pathname];
-  if (pathname.startsWith("/admin/customers/")) return "Khata Ledger";
+  if (pathname.startsWith("/admin/orders/")) return "Order Details";
   return "Admin";
 }
 
@@ -40,7 +38,7 @@ export function Navbar({ onMenuClick }: NavbarProps) {
   const title = getPageTitle(pathname);
 
   return (
-    <header className="sticky top-0 z-30 flex h-16 items-center justify-between border-b border-border bg-surface px-6 shadow-sm">
+    <header className="sticky top-0 z-30 flex h-16 print:hidden items-center justify-between border-b border-border bg-surface px-6 shadow-sm">
       <div className="flex items-center gap-3">
         <button
           type="button"

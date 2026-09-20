@@ -2,7 +2,9 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { Menu, Store, X } from "lucide-react";
+import { Menu, ShoppingCart, Store, X } from "lucide-react";
+
+import { useCart } from "@/lib/cart";
 
 interface NavbarProps {
   storeName?: string;
@@ -12,11 +14,14 @@ interface NavbarProps {
 const NAV_LINKS = [
   { label: "Home", href: "/" },
   { label: "Products", href: "/products" },
+  { label: "About", href: "/about" },
+  { label: "Track Order", href: "/track-order" },
   { label: "Contact", href: "/contact" },
 ];
 
-export function Navbar({ storeName = "Zain Super Store", logoUrl }: NavbarProps) {
+export function Navbar({ storeName = "Rust N Riches", logoUrl }: NavbarProps) {
   const [menuOpen, setMenuOpen] = useState(false);
+  const { itemCount, hydrated } = useCart();
 
   return (
     <header className="sticky top-0 z-30 border-b border-border bg-surface shadow-sm">
@@ -41,15 +46,31 @@ export function Navbar({ storeName = "Zain Super Store", logoUrl }: NavbarProps)
           ))}
         </nav>
 
-        <button
-          type="button"
-          onClick={() => setMenuOpen((open) => !open)}
-          className="shrink-0 text-text-secondary hover:text-text-primary sm:hidden"
-          aria-label={menuOpen ? "Close menu" : "Open menu"}
-          aria-expanded={menuOpen}
-        >
-          {menuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
-        </button>
+        <div className="flex shrink-0 items-center gap-3">
+          <Link
+            href="/cart"
+            className="relative text-text-secondary hover:text-text-primary"
+            aria-label={`Cart${hydrated && itemCount > 0 ? `, ${itemCount} items` : ""}`}
+            onClick={() => setMenuOpen(false)}
+          >
+            <ShoppingCart className="h-6 w-6" />
+            {hydrated && itemCount > 0 && (
+              <span className="absolute -right-2 -top-2 flex h-5 min-w-5 items-center justify-center rounded-full bg-accent px-1 text-xs font-semibold text-accent-foreground">
+                {itemCount > 99 ? "99+" : itemCount}
+              </span>
+            )}
+          </Link>
+
+          <button
+            type="button"
+            onClick={() => setMenuOpen((open) => !open)}
+            className="text-text-secondary hover:text-text-primary sm:hidden"
+            aria-label={menuOpen ? "Close menu" : "Open menu"}
+            aria-expanded={menuOpen}
+          >
+            {menuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+          </button>
+        </div>
       </div>
 
       {menuOpen && (
