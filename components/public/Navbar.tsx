@@ -24,7 +24,9 @@ export function Navbar({ storeName = "Rust N Riches", logoUrl }: NavbarProps) {
   const { itemCount, hydrated } = useCart();
 
   return (
-    <header className="sticky top-0 z-30 border-b border-border bg-surface shadow-sm">
+    // Frosted glass: translucent cream over a backdrop blur, with a near-opaque
+    // fallback for browsers without backdrop-filter support.
+    <header className="sticky top-0 z-30 border-b border-white/40 bg-[rgba(250,246,241,0.95)] shadow-[0_4px_24px_rgba(47,27,18,0.08)] supports-[backdrop-filter]:bg-[rgba(250,246,241,0.65)] supports-[backdrop-filter]:backdrop-blur-xl supports-[backdrop-filter]:backdrop-saturate-150">
       <div className="mx-auto flex h-16 max-w-6xl items-center justify-between gap-4 px-4 sm:px-6">
         <Link href="/" className="flex min-w-0 items-center gap-2" onClick={() => setMenuOpen(false)}>
           {logoUrl ? (
@@ -74,13 +76,13 @@ export function Navbar({ storeName = "Rust N Riches", logoUrl }: NavbarProps) {
       </div>
 
       {menuOpen && (
-        <nav className="flex flex-col gap-1 border-t border-border bg-surface px-4 py-3 text-sm font-medium text-text-secondary sm:hidden">
+        <nav className="flex flex-col gap-1 border-t border-white/40 px-4 py-3 text-sm font-medium text-text-secondary sm:hidden">
           {NAV_LINKS.map((link) => (
             <Link
               key={link.href}
               href={link.href}
               onClick={() => setMenuOpen(false)}
-              className="rounded-lg px-2 py-2 hover:bg-muted hover:text-text-primary"
+              className="rounded-lg px-2 py-2 hover:bg-white/50 hover:text-text-primary"
             >
               {link.label}
             </Link>

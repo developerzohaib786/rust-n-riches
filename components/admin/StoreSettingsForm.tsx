@@ -200,7 +200,7 @@ export function StoreSettingsForm({ defaultValues }: StoreSettingsFormProps) {
                 <FormItem>
                   <FormLabel>Logo</FormLabel>
                   <FormControl>
-                    <ImageUploadField value={field.value ?? ""} onChange={field.onChange} />
+                    <ImageUploadField value={field.value ?? ""} onChange={field.onChange} folder="logos" />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

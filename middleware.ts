@@ -25,5 +25,6 @@ export const config = {
     "/api/categories/:path*",
     "/api/orders/:path*",
     "/api/settings/:path*",
+    "/api/uploads/:path*",
   ],
 };

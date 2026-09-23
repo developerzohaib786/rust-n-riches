@@ -11,44 +11,44 @@ html {
 @layer base {
   :root {
     /* Rust N Riches design system */
-    --primary: #1e5c3a;
-    --primary-light: #2e8b57;
+    --primary: #714423; /* Kobicha */
+    --primary-light: #97704f; /* Chamoisee */
     --primary-foreground: #ffffff;
 
-    --accent: #f5a623;
-    --accent-foreground: #1a1a1a;
+    --accent: #deaf84; /* Buff */
+    --accent-foreground: #2f1b12;
 
-    --danger: #dc2626;
+    --danger: #b42318;
     --danger-foreground: #ffffff;
 
-    --success: #16a34a;
+    --success: #3f7d3a;
     --success-foreground: #ffffff;
 
-    --background: #f8faf9;
-    --foreground: #1a1a1a;
+    --background: #faf6f1;
+    --foreground: #2f1b12; /* Bistre */
 
     --surface: #ffffff;
     --card: #ffffff;
-    --card-foreground: #1a1a1a;
+    --card-foreground: #2f1b12;
 
     --popover: #ffffff;
-    --popover-foreground: #1a1a1a;
+    --popover-foreground: #2f1b12;
 
-    --secondary: #eef2f0;
-    --secondary-foreground: #1e5c3a;
+    --secondary: #f3e7da;
+    --secondary-foreground: #714423;
 
-    --muted: #eef2f0;
-    --muted-foreground: #6b7280;
+    --muted: #f3e7da;
+    --muted-foreground: #6e5d4f;
 
-    --text-primary: #1a1a1a;
-    --text-secondary: #6b7280;
+    --text-primary: #2f1b12;
+    --text-secondary: #6e5d4f;
 
-    --border: #e5e7eb;
-    --input: #e5e7eb;
-    --ring: #1e5c3a;
+    --border: #eadccd;
+    --input: #e0cfbd;
+    --ring: #714423;
 
     /* destructive mirrors danger for shadcn/ui component compatibility */
-    --destructive: #dc2626;
+    --destructive: #b42318;
     --destructive-foreground: #ffffff;
 
     --radius: 0.75rem;

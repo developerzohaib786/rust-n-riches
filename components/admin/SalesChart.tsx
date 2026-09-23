@@ -23,17 +23,17 @@ export function SalesChart({ data }: { data: SalesChartPoint[] }) {
   return (
     <ResponsiveContainer width="100%" height={300}>
       <LineChart data={data} margin={{ top: 8, right: 8, left: 0, bottom: 0 }}>
-        <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" vertical={false} />
+        <CartesianGrid strokeDasharray="3 3" stroke="#EADCCD" vertical={false} />
         <XAxis
           dataKey="label"
-          tick={{ fontSize: 12, fill: "#6B7280" }}
-          axisLine={{ stroke: "#E5E7EB" }}
+          tick={{ fontSize: 12, fill: "#6E5D4F" }}
+          axisLine={{ stroke: "#EADCCD" }}
           tickLine={false}
           interval={4}
         />
         <YAxis
           yAxisId="revenue"
-          tick={{ fontSize: 12, fill: "#6B7280" }}
+          tick={{ fontSize: 12, fill: "#6E5D4F" }}
           axisLine={false}
           tickLine={false}
           width={64}
@@ -43,7 +43,7 @@ export function SalesChart({ data }: { data: SalesChartPoint[] }) {
           yAxisId="orders"
           orientation="right"
           allowDecimals={false}
-          tick={{ fontSize: 12, fill: "#6B7280" }}
+          tick={{ fontSize: 12, fill: "#6E5D4F" }}
           axisLine={false}
           tickLine={false}
           width={32}
@@ -64,7 +64,7 @@ export function SalesChart({ data }: { data: SalesChartPoint[] }) {
           type="monotone"
           dataKey="revenue"
           name="Revenue"
-          stroke="#16A34A"
+          stroke="#714423"
           strokeWidth={2}
           dot={false}
         />
@@ -73,7 +73,7 @@ export function SalesChart({ data }: { data: SalesChartPoint[] }) {
           type="monotone"
           dataKey="orders"
           name="Orders"
-          stroke="#F5A623"
+          stroke="#97704F"
           strokeWidth={2}
           dot={false}
         />
