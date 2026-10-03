@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
+import { Cormorant_Garamond } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "@/components/ui/toaster";
 
@@ -8,9 +9,15 @@ const inter = Inter({
   variable: "--font-inter",
 });
 
+const serif = Cormorant_Garamond({
+  subsets: ["latin"],
+  weight: ["400", "500", "600"],
+  variable: "--font-serif",
+});
+
 export const metadata: Metadata = {
-  title: { default: "Rust N Riches", template: "%s | Rust N Riches" },
-  description: "Shop online at Rust N Riches. Fresh groceries and everyday essentials delivered to your door with cash on delivery.",
+  title: { default: "AQSAURA", template: "%s | AQSAURA" },
+  description: "Shop online at AQSAURA. Quiet pieces for everyday moments, delivered to your door with cash on delivery.",
 };
 
 export default function RootLayout({
@@ -19,7 +26,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={inter.variable}>
+    <html lang="en" className={`${inter.variable} ${serif.variable}`}>
       <body className="font-sans antialiased">
         {children}
         <Toaster />

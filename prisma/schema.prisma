@@ -95,7 +95,7 @@ model OrderItem {
 // Singleton row (fixed id "store") holding the public-facing store profile.
 model StoreSettings {
   id                    String   @id @default("store")
-  name                  String   @default("Rust N Riches")
+  name                  String   @default("AQSAURA")
   logoUrl               String?
   address               String?
   phone                 String?

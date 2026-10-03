@@ -15,12 +15,12 @@ export default async function AboutPage() {
   return (
     <InfoPage
       title={`About ${store.name}`}
-      intro="Everyday essentials, delivered to your door."
+      intro="Quiet pieces for everyday moments, delivered to your door."
     >
       <InfoSection title="Who we are">
         <p>
-          {store.name} is a neighbourhood store that now takes orders online. We stock everyday
-          groceries and household items, and we bring them to you so you can skip the trip.
+          {store.name} is a jewelry label that takes orders online. We make thoughtful, everyday
+          pieces in small batches, and we bring them to your door.
         </p>
       </InfoSection>
 

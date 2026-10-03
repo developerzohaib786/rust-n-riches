@@ -1,4 +1,4 @@
-# Rust N Riches Platform 
+# AQSAURA Platform 
 
 A Next.js 14 (App Router) e-commerce store with an admin panel. Customers browse products, fill a cart and check out as guests (Cash on Delivery, prices in PKR). The store owner manages products, stock and incoming orders from `/admin`.
 

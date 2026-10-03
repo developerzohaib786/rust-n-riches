@@ -7,11 +7,11 @@ import { cn } from "@/lib/utils";
 
 // Photos by Unsplash contributors (unsplash.com/license), stored locally in public/hero.
 const SLIDES = [
-  { src: "/hero/1-produce-shelves.jpg", alt: "Supermarket shelves stocked with fresh vegetables" },
-  { src: "/hero/2-bright-aisle.jpg", alt: "Brightly lit grocery store aisle" },
-  { src: "/hero/3-fresh-market.jpg", alt: "Market stall full of fruits and vegetables" },
-  { src: "/hero/4-fresh-vegetables.jpg", alt: "Fresh carrots, potatoes, peppers and radishes" },
-  { src: "/hero/5-store-aisle.jpg", alt: "Grocery aisle with packaged goods on both sides" },
+  { src: "/hero/1-produce-shelves.jpg", alt: "Jewelry display" },
+  { src: "/hero/2-bright-aisle.jpg", alt: "Jewelry collection" },
+  { src: "/hero/3-fresh-market.jpg", alt: "Jewelry on display" },
+  { src: "/hero/4-fresh-vegetables.jpg", alt: "Jewelry detail" },
+  { src: "/hero/5-store-aisle.jpg", alt: "Jewelry boutique" },
 ];
 
 const INTERVAL_MS = 5000;
@@ -47,8 +47,8 @@ export function HeroSlideshow() {
           )}
         />
       ))}
-      {/* Warm Bistre overlay keeps the headline readable on any photo. */}
-      <div className="absolute inset-0 bg-gradient-to-b from-[#2f1b12]/75 via-[#2f1b12]/60 to-[#2f1b12]/80" />
+      {/* Warm Aubergine overlay keeps the headline readable on any photo. */}
+      <div className="absolute inset-0 bg-gradient-to-b from-[#2a0f3d]/75 via-[#2a0f3d]/60 to-[#2a0f3d]/80" />
     </div>
   );
 }

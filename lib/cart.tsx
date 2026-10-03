@@ -35,7 +35,7 @@ interface CartContextValue {
   refresh: () => Promise<ShippingRules | null>;
 }
 
-const STORAGE_KEY = "rust-n-riches-cart-v1";
+const STORAGE_KEY = "aqsaura-cart-v1";
 
 const CartContext = React.createContext<CartContextValue | null>(null);
 

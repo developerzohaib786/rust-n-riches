@@ -21,7 +21,7 @@ export function getCloudinaryConfig() {
     cloudName,
     apiKey,
     apiSecret,
-    rootFolder: process.env.CLOUDINARY_UPLOAD_FOLDER || "rust-n-riches",
+    rootFolder: process.env.CLOUDINARY_UPLOAD_FOLDER || "aqsaura",
   };
 }
 

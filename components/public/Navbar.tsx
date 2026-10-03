@@ -19,14 +19,14 @@ const NAV_LINKS = [
   { label: "Contact", href: "/contact" },
 ];
 
-export function Navbar({ storeName = "Rust N Riches", logoUrl }: NavbarProps) {
+export function Navbar({ storeName = "AQSAURA", logoUrl }: NavbarProps) {
   const [menuOpen, setMenuOpen] = useState(false);
   const { itemCount, hydrated } = useCart();
 
   return (
     // Frosted glass: translucent cream over a backdrop blur, with a near-opaque
     // fallback for browsers without backdrop-filter support.
-    <header className="sticky top-0 z-30 border-b border-white/40 bg-[rgba(250,246,241,0.95)] shadow-[0_4px_24px_rgba(47,27,18,0.08)] supports-[backdrop-filter]:bg-[rgba(250,246,241,0.65)] supports-[backdrop-filter]:backdrop-blur-xl supports-[backdrop-filter]:backdrop-saturate-150">
+    <header className="sticky top-0 z-30 border-b border-white/40 bg-[rgba(250,247,251,0.95)] shadow-[0_4px_24px_rgba(42,15,61,0.08)] supports-[backdrop-filter]:bg-[rgba(250,247,251,0.65)] supports-[backdrop-filter]:backdrop-blur-xl supports-[backdrop-filter]:backdrop-saturate-150">
       <div className="mx-auto flex h-16 max-w-6xl items-center justify-between gap-4 px-4 sm:px-6">
         <Link href="/" className="flex min-w-0 items-center gap-2" onClick={() => setMenuOpen(false)}>
           {logoUrl ? (
@@ -35,12 +35,12 @@ export function Navbar({ storeName = "Rust N Riches", logoUrl }: NavbarProps) {
           ) : (
             <Store className="h-5 w-5 shrink-0 text-primary" />
           )}
-          <span className="truncate text-lg font-semibold tracking-tight text-text-primary">
+          <span className="truncate font-serif text-2xl font-medium uppercase tracking-[0.2em] text-text-primary">
             {storeName}
           </span>
         </Link>
 
-        <nav className="hidden items-center gap-6 text-sm font-medium text-text-secondary sm:flex">
+        <nav className="hidden items-center gap-6 text-sm font-medium text-text-secondary sm:flex [&_a]:uppercase [&_a]:tracking-widest [&_a]:text-xs">
           {NAV_LINKS.map((link) => (
             <Link key={link.href} href={link.href} className="hover:text-text-primary">
               {link.label}

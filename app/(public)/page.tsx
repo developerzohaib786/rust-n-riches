@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowRight, Banknote, Package, ShoppingBasket, Truck } from "lucide-react";
+import { ArrowRight, Banknote, Package, Gem, Truck } from "lucide-react";
 
 import { prisma } from "@/lib/prisma";
 import { Button } from "@/components/ui/button";
@@ -31,18 +31,18 @@ export default async function HomePage() {
 
   return (
     <div>
-      <section className="relative isolate overflow-hidden border-b border-border bg-[#2f1b12]">
+      <section className="relative isolate overflow-hidden border-b border-border bg-[#2a0f3d]">
         <HeroSlideshow />
-        <div className="relative mx-auto flex min-h-[28rem] max-w-6xl flex-col items-center justify-center gap-4 px-6 py-24 text-center sm:min-h-[34rem]">
-          <div className="flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-4 py-1.5 text-sm font-medium text-[#deaf84] backdrop-blur-sm">
-            <ShoppingBasket className="h-4 w-4" />
-            {settings?.name ?? "Rust N Riches"}
+        <div className="relative mx-auto flex min-h-[28rem] max-w-6xl flex-col items-start justify-center gap-4 px-6 py-24 text-left sm:min-h-[34rem]">
+          <div className="flex items-center gap-2 border-b border-white/30 px-0 py-1.5 text-xs font-medium uppercase tracking-[0.25em] text-[#d9b8f0]">
+            <Gem className="h-4 w-4" />
+            {settings?.name ?? "AQSAURA"}
           </div>
-          <h1 className="max-w-2xl text-3xl font-semibold tracking-tight text-white drop-shadow sm:text-5xl">
-            Shop everyday essentials online, delivered to your door
+          <h1 className="max-w-2xl font-serif text-4xl font-normal tracking-tight text-white drop-shadow sm:text-6xl">
+            Quiet pieces for everyday moments.
           </h1>
           <p className="max-w-xl text-base text-white/85">
-            Pick what you need, place your order in a minute, and pay in cash when it arrives.
+            Pick what you love, place your order in a minute, and pay in cash when it arrives.
           </p>
           <Button asChild size="lg" variant="accent" className="mt-2">
             <Link href="/products">
@@ -88,9 +88,13 @@ export default async function HomePage() {
         </div>
       </section>
 
+      <div className="border-y border-primary/20 bg-secondary py-2 text-center text-[11px] font-medium uppercase tracking-[0.3em] text-primary">
+        Handcrafted with care · Small batches · Made to last
+      </div>
+
       {categories.length > 0 && (
         <section className="mx-auto max-w-6xl px-6 pt-16">
-          <h2 className="text-2xl font-semibold tracking-tight text-text-primary">
+          <h2 className="font-serif text-3xl font-normal tracking-tight text-text-primary">
             Shop by Category
           </h2>
           <div className="mt-6 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
@@ -98,7 +102,7 @@ export default async function HomePage() {
               <Link
                 key={category.id}
                 href={`/products?category=${category.id}`}
-                className="rounded-xl border border-border bg-surface p-4 shadow-sm transition-shadow hover:shadow-md"
+                className="border border-border bg-surface p-5 text-center transition-colors hover:border-primary"
               >
                 <p className="text-base font-semibold text-text-primary">{category.name}</p>
                 <p className="mt-1 text-sm text-text-secondary">
@@ -112,8 +116,8 @@ export default async function HomePage() {
 
       <section className="mx-auto max-w-6xl px-6 py-16">
         <div className="flex items-center justify-between">
-          <h2 className="text-2xl font-semibold tracking-tight text-text-primary">
-            New Arrivals
+          <h2 className="font-serif text-3xl font-normal tracking-tight text-text-primary">
+            Bestsellers
           </h2>
           <Link
             href="/products"
@@ -127,7 +131,7 @@ export default async function HomePage() {
           <EmptyState
             icon={Package}
             title="No products yet"
-            description="Check back soon, we're stocking the shelves."
+            description="Check back soon, we're preparing the collection."
           />
         ) : (
           // A single row: four across on desktop, swipeable sideways on smaller screens.
@@ -142,7 +146,7 @@ export default async function HomePage() {
       </section>
 
       <section className="mx-auto max-w-6xl px-6 py-16">
-        <div className="relative isolate overflow-hidden rounded-3xl bg-[#2f1b12] shadow-md">
+        <div className="relative isolate overflow-hidden rounded-none bg-[#2a0f3d] shadow-md">
           <Image
             src="/hero/4-fresh-vegetables.jpg"
             alt=""
@@ -150,18 +154,18 @@ export default async function HomePage() {
             sizes="(min-width: 1152px) 1104px, 100vw"
             className="-z-10 object-cover opacity-60"
           />
-          <div className="absolute inset-0 -z-10 bg-gradient-to-r from-[#2f1b12] via-[#2f1b12]/80 to-[#2f1b12]/30" />
+          <div className="absolute inset-0 -z-10 bg-gradient-to-r from-[#2a0f3d] via-[#2a0f3d]/80 to-[#2a0f3d]/30" />
           <div className="px-8 py-14 sm:px-12 sm:py-16">
-            <p className="text-sm font-semibold uppercase tracking-widest text-[#deaf84]">
-              Your kitchen, restocked
+            <p className="text-sm font-semibold uppercase tracking-widest text-[#d9b8f0]">
+              Made to be worn, made to last
             </p>
-            <h2 className="mt-3 text-3xl font-semibold tracking-tight text-white sm:text-4xl lg:whitespace-nowrap">
-              Fresh groceries without leaving home
+            <h2 className="mt-3 font-serif text-3xl font-normal tracking-tight text-white sm:text-5xl lg:whitespace-nowrap">
+              Everyday pieces, delivered home
             </h2>
             <p className="mt-4 max-w-lg text-base text-white/80">
               {freeShippingThreshold != null
-                ? `Fill your basket and get free delivery on orders over ${formatPrice(freeShippingThreshold)}.`
-                : "Fill your basket in a few taps and we'll handle the rest."}
+                ? `Fill your bag and get free delivery on orders over ${formatPrice(freeShippingThreshold)}.`
+                : "Order in a few taps and we'll handle the rest."}
             </p>
             <div className="mt-8 flex flex-wrap gap-3">
               <Button asChild size="lg" variant="accent">

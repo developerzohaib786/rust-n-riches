@@ -70,7 +70,7 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
             description={
               query || categoryId
                 ? "Try a different search term or category."
-                : "Check back soon, we're stocking the shelves."
+                : "Check back soon, we're preparing the collection."
             }
           />
         ) : (

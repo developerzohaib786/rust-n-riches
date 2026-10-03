@@ -52,7 +52,7 @@ export function Sidebar({ open, onClose }: SidebarProps) {
           <div className="flex items-center gap-2">
             <Store className="h-5 w-5 text-primary" />
             <span className="text-sm font-semibold tracking-tight text-text-primary">
-              Rust N Riches
+              AQSAURA
             </span>
           </div>
           <button

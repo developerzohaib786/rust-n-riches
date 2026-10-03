@@ -30,8 +30,8 @@ export default async function ReturnsPage() {
       <InfoSection title="What we can do">
         <p>
           Depending on the problem, we will replace the item, deliver what was missing, or refund
-          the amount for it. Because we sell groceries, we cannot take back perishable items that
-          were delivered in good condition.
+          the amount for it. We cannot take back custom or personalised pieces that were
+          delivered in good condition.
         </p>
       </InfoSection>
 

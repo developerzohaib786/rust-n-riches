@@ -72,7 +72,7 @@ export function StoreSettingsForm({ defaultValues }: StoreSettingsFormProps) {
                 <FormItem>
                   <FormLabel>Store Name</FormLabel>
                   <FormControl>
-                    <Input placeholder="e.g. Rust N Riches" {...field} />
+                    <Input placeholder="e.g. AQSAURA" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

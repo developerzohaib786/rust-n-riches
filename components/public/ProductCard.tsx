@@ -19,7 +19,7 @@ export function ProductCard({ product }: { product: ProductCardData }) {
   return (
     <Card className="flex h-full flex-col">
       <Link href={`/products/${product.id}`} className="flex-1">
-        <div className="flex h-40 items-center justify-center overflow-hidden rounded-t-xl bg-muted">
+        <div className="flex h-40 items-center justify-center overflow-hidden rounded-none bg-muted">
           {product.imageUrl ? (
             // eslint-disable-next-line @next/next/no-img-element
             <img
