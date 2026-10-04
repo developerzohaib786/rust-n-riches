@@ -26,9 +26,10 @@ model Product {
   name        String
   description String?
   price       Float
-  unit        String      // kg, packet, dozen, litre etc.
+  unit        String      // piece, pair, set etc.
   stock       Int         @default(0)
-  imageUrl    String?
+  imageUrl    String?     // main photo, shown on cards and first in the gallery
+  images      String[]    @default([]) // extra gallery photos
   categoryId  String
   category    Category    @relation(fields: [categoryId], references: [id])
   isActive    Boolean     @default(true)

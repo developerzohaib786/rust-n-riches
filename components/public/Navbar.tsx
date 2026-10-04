@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { Menu, ShoppingCart, Store, X } from "lucide-react";
+import { Gem, Menu, ShoppingCart, X } from "lucide-react";
 
 import { useCart } from "@/lib/cart";
 
@@ -33,7 +33,7 @@ export function Navbar({ storeName = "AQSAURA", logoUrl }: NavbarProps) {
             // eslint-disable-next-line @next/next/no-img-element
             <img src={logoUrl} alt={storeName} className="h-7 w-7 shrink-0 rounded object-cover" />
           ) : (
-            <Store className="h-5 w-5 shrink-0 text-primary" />
+            <Gem className="h-5 w-5 shrink-0 text-primary" />
           )}
           <span className="truncate font-serif text-2xl font-medium uppercase tracking-[0.2em] text-text-primary">
             {storeName}

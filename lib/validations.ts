@@ -17,6 +17,7 @@ export const productSchema = z.object({
     .int()
     .nonnegative("Stock cannot be negative"),
   imageUrl: z.string().optional().or(z.literal("")),
+  images: z.array(z.string()).optional(),
   categoryId: z.string().min(1, "Category is required"),
   isActive: z.boolean(),
 });

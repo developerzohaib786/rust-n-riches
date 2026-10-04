@@ -11,9 +11,9 @@ html {
 @layer base {
   :root {
     /* AQSAURA design system */
-    --primary: #4b1d6e; 
-    --primary-light: #8a5cb0; 
-    --primary-foreground: #ffffff;
+    --primary: #a87a0a;
+    --primary-light: #d4a72c;
+    --primary-foreground: #2a0f3d;
 
     --accent: #d9b8f0; 
     --accent-foreground: #2a0f3d;
@@ -45,7 +45,7 @@ html {
 
     --border: #e6d9ee;
     --input: #dccbe8;
-    --ring: #4b1d6e;
+    --ring: #a87a0a;
 
     /* destructive mirrors danger for shadcn/ui component compatibility */
     --destructive: #b42318;

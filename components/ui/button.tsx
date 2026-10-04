@@ -9,7 +9,7 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
-        default: "bg-primary text-primary-foreground hover:bg-primary-light",
+        default: "bg-gradient-to-r from-[#4b1d6e] via-[#8a5cb0] to-[#b8860b] font-semibold text-white shadow-md hover:brightness-110 hover:shadow-lg",
         secondary:
           "border border-primary bg-transparent text-primary hover:bg-primary/5",
         outline:
@@ -17,6 +17,7 @@ const buttonVariants = cva(
         ghost: "text-text-primary hover:bg-muted",
         danger: "bg-danger text-danger-foreground hover:bg-danger/90",
         accent: "bg-accent text-accent-foreground hover:bg-accent/90",
+        gold: "bg-gradient-to-r from-[#4b1d6e] via-[#8a5cb0] to-[#b8860b] font-semibold text-white shadow-md hover:brightness-110 hover:shadow-lg",
         success: "bg-success text-success-foreground hover:bg-success/90",
         link: "text-primary underline-offset-4 hover:underline",
       },

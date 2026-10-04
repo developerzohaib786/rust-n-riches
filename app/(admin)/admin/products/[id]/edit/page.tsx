@@ -38,6 +38,7 @@ export default async function EditProductPage({
             unit: product.unit,
             stock: product.stock,
             imageUrl: product.imageUrl ?? "",
+            images: product.images ?? [],
             categoryId: product.categoryId,
             isActive: product.isActive,
           }}

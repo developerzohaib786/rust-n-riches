@@ -1,6 +1,8 @@
 import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcryptjs";
 
+import { CATALOG } from "./catalog";
+
 const prisma = new PrismaClient();
 
 async function main() {
@@ -22,46 +24,44 @@ async function main() {
   }
 
   if (process.env.SEED_DEMO === "true") {
-    await seedDemoCatalog();
+    await seedCatalog();
   }
 }
 
-// Optional sample data so a fresh database has something to browse and order.
-async function seedDemoCatalog() {
-  const demo = [
-    {
-      category: "Grocery",
-      products: [
-        { name: "Basmati Rice", price: 320, unit: "kg", stock: 50 },
-        { name: "Cooking Oil", price: 540, unit: "litre", stock: 30 },
-        { name: "Sugar", price: 140, unit: "kg", stock: 40 },
-      ],
-    },
-    {
-      category: "Dairy & Eggs",
-      products: [
-        { name: "Fresh Milk", price: 220, unit: "litre", stock: 20 },
-        { name: "Eggs", price: 360, unit: "dozen", stock: 25 },
-        { name: "Yogurt", price: 180, unit: "packet", stock: 3 },
-      ],
-    },
-  ];
-
-  for (const { category, products } of demo) {
+// Seeds the jewelry catalog from prisma/catalog.ts. Safe to re-run: products that
+// already exist (matched by name) are left alone, so dashboard edits are never overwritten.
+async function seedCatalog() {
+  for (const { category, products } of CATALOG) {
     const existing =
       (await prisma.category.findFirst({ where: { name: category } })) ??
       (await prisma.category.create({ data: { name: category } }));
 
-    for (const product of products) {
+    for (const { images, ...product } of products) {
       const found = await prisma.product.findFirst({ where: { name: product.name } });
       if (!found) {
-        await prisma.product.create({ data: { ...product, categoryId: existing.id } });
+        await prisma.product.create({
+          data: {
+            ...product,
+            imageUrl: images[0] ?? null,
+            images: images.slice(1),
+            categoryId: existing.id,
+          },
+        });
       }
     }
   }
 
-  console.log("Seeded demo categories and products");
+  // The first demo run seeded grocery items. Hide them from the storefront; they stay in the
+  // database because past orders refer to them.
+  await prisma.product.updateMany({
+    where: { name: { in: OLD_DEMO_PRODUCTS } },
+    data: { isActive: false },
+  });
+
+  console.log("Seeded jewelry categories and products");
 }
+
+const OLD_DEMO_PRODUCTS = ["Basmati Rice", "Cooking Oil", "Sugar", "Fresh Milk", "Eggs", "Yogurt"];
 
 main()
   .catch((err) => {

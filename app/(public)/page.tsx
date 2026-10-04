@@ -33,7 +33,7 @@ export default async function HomePage() {
     <div>
       <section className="relative isolate overflow-hidden border-b border-border bg-[#2a0f3d]">
         <HeroSlideshow />
-        <div className="relative mx-auto flex min-h-[28rem] max-w-6xl flex-col items-start justify-center gap-4 px-6 py-24 text-left sm:min-h-[34rem]">
+        <div className="relative mx-auto flex min-h-[calc(100svh-4rem)] max-w-6xl flex-col items-start justify-center gap-4 px-6 py-24 text-left">
           <div className="flex items-center gap-2 border-b border-white/30 px-0 py-1.5 text-xs font-medium uppercase tracking-[0.25em] text-[#d9b8f0]">
             <Gem className="h-4 w-4" />
             {settings?.name ?? "AQSAURA"}
@@ -44,7 +44,7 @@ export default async function HomePage() {
           <p className="max-w-xl text-base text-white/85">
             Pick what you love, place your order in a minute, and pay in cash when it arrives.
           </p>
-          <Button asChild size="lg" variant="accent" className="mt-2">
+          <Button asChild size="lg" variant="gold" className="mt-2">
             <Link href="/products">
               Shop Now
               <ArrowRight className="h-4 w-4" />
@@ -148,7 +148,7 @@ export default async function HomePage() {
       <section className="mx-auto max-w-6xl px-6 py-16">
         <div className="relative isolate overflow-hidden rounded-none bg-[#2a0f3d] shadow-md">
           <Image
-            src="/hero/4-fresh-vegetables.jpg"
+            src="/hero/4-gold-rings.jpg"
             alt=""
             fill
             sizes="(min-width: 1152px) 1104px, 100vw"

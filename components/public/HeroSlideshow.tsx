@@ -7,11 +7,11 @@ import { cn } from "@/lib/utils";
 
 // Photos by Unsplash contributors (unsplash.com/license), stored locally in public/hero.
 const SLIDES = [
-  { src: "/hero/1-produce-shelves.jpg", alt: "Jewelry display" },
-  { src: "/hero/2-bright-aisle.jpg", alt: "Jewelry collection" },
-  { src: "/hero/3-fresh-market.jpg", alt: "Jewelry on display" },
-  { src: "/hero/4-fresh-vegetables.jpg", alt: "Jewelry detail" },
-  { src: "/hero/5-store-aisle.jpg", alt: "Jewelry boutique" },
+  { src: "/hero/1-gold-collection.jpg", alt: "Gold jewelry collection" },
+  { src: "/hero/2-display-case.jpg", alt: "Jewelry display case" },
+  { src: "/hero/3-necklace-earrings.jpg", alt: "Gold necklace and earrings" },
+  { src: "/hero/4-gold-rings.jpg", alt: "Ornate gold rings" },
+  { src: "/hero/5-gold-bracelets.jpg", alt: "Gold bracelets" },
 ];
 
 const INTERVAL_MS = 5000;

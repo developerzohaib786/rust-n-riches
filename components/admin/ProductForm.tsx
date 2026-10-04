@@ -56,6 +56,7 @@ const EMPTY_DEFAULTS: ProductInput = {
   unit: "",
   stock: 0,
   imageUrl: "",
+  images: [],
   categoryId: "",
   isActive: true,
 };
@@ -112,7 +113,7 @@ export function ProductForm({ mode, productId, categories: initialCategories, de
       const res = await fetch(url, {
         method,
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(values),
+        body: JSON.stringify({ ...values, images: (values.images ?? []).filter(Boolean) }),
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.message ?? "Failed to save product");
@@ -217,7 +218,7 @@ export function ProductForm({ mode, productId, categories: initialCategories, de
                   <FormItem>
                     <FormLabel>Unit</FormLabel>
                     <FormControl>
-                      <Input placeholder="kg, litre, dozen, packet, item,..." {...field} />
+                      <Input placeholder="piece, pair, set, item,..." {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -289,6 +290,42 @@ export function ProductForm({ mode, productId, categories: initialCategories, de
                   <FormMessage />
                 </FormItem>
               )}
+            />
+
+            <FormField
+              control={form.control}
+              name="images"
+              render={({ field }) => {
+                const images = field.value ?? [];
+                return (
+                  <FormItem>
+                    <FormLabel>More Photos</FormLabel>
+                    <div className="flex flex-col gap-4">
+                      {images.map((url, index) => (
+                        <ImageUploadField
+                          key={index}
+                          value={url}
+                          onChange={(next) =>
+                            field.onChange(
+                              next ? images.map((u, i) => (i === index ? next : u)) : images.filter((_, i) => i !== index),
+                            )
+                          }
+                        />
+                      ))}
+                      <Button
+                        type="button"
+                        variant="outline"
+                        className="w-fit"
+                        onClick={() => field.onChange([...images, ""])}
+                      >
+                        <Plus className="h-4 w-4" />
+                        Add another photo
+                      </Button>
+                    </div>
+                    <FormMessage />
+                  </FormItem>
+                );
+              }}
             />
 
             <div className="flex justify-end gap-3 border-t border-border pt-6">

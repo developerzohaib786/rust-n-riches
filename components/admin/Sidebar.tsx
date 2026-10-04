@@ -9,7 +9,7 @@ import {
   Boxes,
   ShoppingBag,
   Settings,
-  Store,
+  Gem,
   X,
 } from "lucide-react";
 
@@ -50,7 +50,7 @@ export function Sidebar({ open, onClose }: SidebarProps) {
       >
         <div className="flex h-16 items-center justify-between border-b border-border px-6">
           <div className="flex items-center gap-2">
-            <Store className="h-5 w-5 text-primary" />
+            <Gem className="h-5 w-5 text-primary" />
             <span className="text-sm font-semibold tracking-tight text-text-primary">
               AQSAURA
             </span>

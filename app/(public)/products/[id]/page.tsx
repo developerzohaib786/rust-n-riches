@@ -5,6 +5,7 @@ import { ArrowLeft, Package } from "lucide-react";
 
 import { prisma } from "@/lib/prisma";
 import { Badge } from "@/components/ui/badge";
+import { ProductGallery } from "@/components/public/ProductGallery";
 import { AddToCartButton } from "@/components/public/AddToCartButton";
 import { formatPrice } from "@/lib/utils";
 
@@ -31,6 +32,8 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
 
   if (!product) notFound();
 
+  const gallery = [product.imageUrl, ...(product.images ?? [])].filter((url): url is string => Boolean(url));
+
   return (
     <div className="mx-auto max-w-6xl px-6 py-10">
       <Link
@@ -42,18 +45,13 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
       </Link>
 
       <div className="mt-6 grid grid-cols-1 gap-10 md:grid-cols-2">
-        <div className="flex aspect-square items-center justify-center overflow-hidden rounded-xl border border-border bg-muted">
-          {product.imageUrl ? (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img
-              src={product.imageUrl}
-              alt={product.name}
-              className="h-full w-full object-cover"
-            />
-          ) : (
+        {gallery.length > 0 ? (
+          <ProductGallery images={gallery} name={product.name} />
+        ) : (
+          <div className="flex aspect-square items-center justify-center overflow-hidden rounded-xl border border-border bg-muted">
             <Package className="h-16 w-16 text-text-secondary" />
-          )}
-        </div>
+          </div>
+        )}
 
         <div className="flex flex-col gap-4">
           <span className="w-fit rounded-full bg-primary/10 px-3 py-1 text-xs font-medium text-primary">

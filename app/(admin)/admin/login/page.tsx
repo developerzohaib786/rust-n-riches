@@ -5,7 +5,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { signIn } from "next-auth/react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Store } from "lucide-react";
+import { Gem } from "lucide-react";
 
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -65,7 +65,7 @@ function LoginForm() {
     <main className="flex min-h-screen items-center justify-center bg-background px-6">
       <Card className="w-full max-w-sm">
         <CardHeader className="items-center text-center">
-          <Store className="h-8 w-8 text-primary" />
+          <Gem className="h-8 w-8 text-primary" />
           <CardTitle>Admin Login</CardTitle>
           <CardDescription>Sign in to manage your online store.</CardDescription>
         </CardHeader>
