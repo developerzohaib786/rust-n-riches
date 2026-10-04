@@ -6,6 +6,7 @@ import { prisma } from "@/lib/prisma";
 import { Button } from "@/components/ui/button";
 import { EmptyState } from "@/components/ui/empty-state";
 import { HeroSlideshow } from "@/components/public/HeroSlideshow";
+import { CategoryAccordion } from "@/components/public/CategoryAccordion";
 import { ProductCard } from "@/components/public/ProductCard";
 import { formatPrice } from "@/lib/utils";
 
@@ -22,7 +23,16 @@ export default async function HomePage() {
       where: { products: { some: { isActive: true } } },
       orderBy: { name: "asc" },
       take: 8,
-      include: { _count: { select: { products: { where: { isActive: true } } } } },
+      include: {
+        _count: { select: { products: { where: { isActive: true } } } },
+        // The newest product's photo is used as the category's cover.
+        products: {
+          where: { isActive: true, imageUrl: { not: null } },
+          orderBy: { createdAt: "desc" },
+          take: 1,
+          select: { imageUrl: true },
+        },
+      },
     }),
     prisma.storeSettings.findUnique({ where: { id: "store" } }),
   ]);
@@ -94,22 +104,21 @@ export default async function HomePage() {
 
       {categories.length > 0 && (
         <section className="mx-auto max-w-6xl px-6 pt-16">
-          <h2 className="font-serif text-3xl font-normal tracking-tight text-text-primary">
-            Shop by Category
-          </h2>
-          <div className="mt-6 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
-            {categories.map((category) => (
-              <Link
-                key={category.id}
-                href={`/products?category=${category.id}`}
-                className="border border-border bg-surface p-5 text-center transition-colors hover:border-primary"
-              >
-                <p className="text-base font-semibold text-text-primary">{category.name}</p>
-                <p className="mt-1 text-sm text-text-secondary">
-                  {category._count.products} item{category._count.products === 1 ? "" : "s"}
-                </p>
-              </Link>
-            ))}
+          <div className="flex items-center gap-4">
+            <span className="h-3 w-24 shrink-0 bg-gradient-to-r from-[#4b1d6e] via-[#8a5cb0] to-[#c9a227]" />
+            <h2 className="font-serif text-3xl font-normal tracking-tight text-text-primary">
+              Shop by Category
+            </h2>
+          </div>
+          <div className="mt-6">
+            <CategoryAccordion
+              categories={categories.map((category) => ({
+                id: category.id,
+                name: category.name,
+                count: category._count.products,
+                imageUrl: category.products[0]?.imageUrl ?? null,
+              }))}
+            />
           </div>
         </section>
       )}
