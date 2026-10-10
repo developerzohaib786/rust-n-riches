@@ -39,10 +39,16 @@ export default async function HomePage() {
 
   const freeShippingThreshold = settings?.freeShippingThreshold ?? null;
 
+  // The hero cycles through the same cover photos shown in "Shop by Category".
+  const heroSlides = categories.flatMap((category) => {
+    const src = category.products[0]?.imageUrl;
+    return src ? [{ src, alt: category.name }] : [];
+  });
+
   return (
     <div>
       <section className="relative isolate overflow-hidden border-b border-border bg-[#2a0f3d]">
-        <HeroSlideshow />
+        <HeroSlideshow slides={heroSlides} />
         <div className="relative mx-auto flex min-h-[calc(100svh-4rem)] max-w-6xl flex-col items-start justify-center gap-4 px-6 py-24 text-left">
           <div className="flex items-center gap-2 border-b border-white/30 px-0 py-1.5 text-xs font-medium uppercase tracking-[0.25em] text-[#d9b8f0]">
             <Gem className="h-4 w-4" />
