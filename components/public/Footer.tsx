@@ -13,7 +13,7 @@ export function Footer({ storeName = "AQSAURA", address, phone, email }: FooterP
       <div className="mx-auto grid max-w-6xl grid-cols-1 gap-8 px-6 py-10 text-sm text-white/70 sm:grid-cols-2 lg:grid-cols-4">
         <div className="flex flex-col gap-1">
           <span className="font-serif text-2xl font-medium uppercase tracking-[0.2em] text-white">{storeName}</span>
-          <span>Quiet pieces for everyday moments.</span>
+          <span>Wear Your Aura</span>
         </div>
 
         <nav className="flex flex-col gap-1">

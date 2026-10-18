@@ -1,6 +1,7 @@
 import { prisma } from "@/lib/prisma";
 import { Navbar } from "@/components/public/Navbar";
 import { Footer } from "@/components/public/Footer";
+import { SUPPORT_EMAIL } from "@/lib/store";
 import { CartProvider } from "@/lib/cart";
 
 export const dynamic = "force-dynamic";
@@ -21,7 +22,7 @@ export default async function PublicLayout({ children }: { children: React.React
           storeName={settings.name}
           address={settings.address}
           phone={settings.phone}
-          email={settings.email}
+          email={settings.email || SUPPORT_EMAIL}
         />
       </div>
     </CartProvider>

@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowRight, Banknote, Package, Gem, Truck } from "lucide-react";
+import { ArrowRight, Banknote, Package, Truck } from "lucide-react";
 
 import { prisma } from "@/lib/prisma";
 import { Button } from "@/components/ui/button";
@@ -39,28 +39,18 @@ export default async function HomePage() {
 
   const freeShippingThreshold = settings?.freeShippingThreshold ?? null;
 
-  // The hero cycles through the same cover photos shown in "Shop by Category".
-  const heroSlides = categories.flatMap((category) => {
-    const src = category.products[0]?.imageUrl;
-    return src ? [{ src, alt: category.name }] : [];
-  });
+  // Banner photos for the hero.
+  const heroSlides = [
+    { src: "/hero/banner-1.jpg", alt: "Wear Your Aura: minimal gold jewellery on a marble tray" },
+    { src: "/hero/banner-2.jpg", alt: "Gold bracelet, hoops, necklace and ring on stone" },
+  ];
 
   return (
     <div>
-      <section className="relative isolate overflow-hidden border-b border-border bg-[#2a0f3d]">
+      <section className="relative isolate overflow-hidden border-b border-border bg-[#f3ebe0]">
         <HeroSlideshow slides={heroSlides} />
-        <div className="relative mx-auto flex min-h-[calc(100svh-4rem)] max-w-6xl flex-col items-start justify-center gap-4 px-6 py-24 text-left">
-          <div className="flex items-center gap-2 border-b border-white/30 px-0 py-1.5 text-xs font-medium uppercase tracking-[0.25em] text-[#d9b8f0]">
-            <Gem className="h-4 w-4" />
-            {settings?.name ?? "AQSAURA"}
-          </div>
-          <h1 className="max-w-2xl font-serif text-4xl font-normal tracking-tight text-white drop-shadow sm:text-6xl">
-            Quiet pieces for everyday moments.
-          </h1>
-          <p className="max-w-xl text-base text-white/85">
-            Pick what you love, place your order in a minute, and pay in cash when it arrives.
-          </p>
-          <Button asChild size="lg" variant="gold" className="mt-2">
+        <div className="relative mx-auto flex min-h-[calc(100svh-4rem)] max-w-6xl flex-col items-start justify-end px-6 py-16 text-left">
+          <Button asChild size="lg" variant="gold">
             <Link href="/products">
               Shop Now
               <ArrowRight className="h-4 w-4" />
@@ -105,7 +95,7 @@ export default async function HomePage() {
       </section>
 
       <div className="border-y border-primary/20 bg-secondary py-2 text-center text-[11px] font-medium uppercase tracking-[0.3em] text-primary">
-        Handcrafted with care · Small batches · Made to last
+        Luxury - Anti-tarnish - Made to Last
       </div>
 
       {categories.length > 0 && (

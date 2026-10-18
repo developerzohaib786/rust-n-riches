@@ -2,6 +2,7 @@ import { prisma } from "@/lib/prisma";
 import { formatPrice } from "@/lib/utils";
 
 export const DEFAULT_STORE_NAME = "AQSAURA";
+export const SUPPORT_EMAIL = "aqsaura2026@gmail.com";
 
 // Store profile with safe defaults, for pages that only read settings (info/policy pages).
 export async function getStoreInfo() {
