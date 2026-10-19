@@ -15,13 +15,25 @@ export default async function AboutPage() {
   return (
     <InfoPage
       title={`About ${store.name}`}
-      intro="Quiet pieces for everyday moments, delivered to your door."
+      intro="An aura is more than what you wear. It's what you leave behind."
     >
       <InfoSection title="Who we are">
         <p>
-          {store.name} is a jewelry label that takes orders online. We make thoughtful, everyday
-          pieces in small batches, and we bring them to your door.
+          At AQS AURA, we believe an aura is more than what you wear — it&apos;s what you leave
+          behind. Born from a passion for timeless elegance and modern sophistication, AQS AURA is
+          a luxury lifestyle brand dedicated to crafting experiences that awaken the senses. Every
+          creation is a blend of artistry, purity, and precision, designed for those who carry
+          confidence quietly and leave an unforgettable presence.
         </p>
+        <p>
+          We are not just selling a product. We are curating an identity. Whether it&apos;s a
+          fragrance, an outfit, or a lifestyle essential, AQS AURA stands for quality without
+          compromise, luxury without pretense, and beauty that lasts.
+        </p>
+      </InfoSection>
+
+      <InfoSection title="Our Promise">
+        <p>Authenticity in every detail. Excellence in every experience.</p>
       </InfoSection>
 
       <InfoSection title="How ordering works">
