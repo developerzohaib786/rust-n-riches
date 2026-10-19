@@ -3,7 +3,11 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { checkoutSchema } from "@/lib/validations";
 import { ApiError } from "@/lib/api-error";
-import { calculateShipping } from "@/lib/utils";
+import {
+  calculateShipping,
+  DEFAULT_FREE_SHIPPING_THRESHOLD,
+  DEFAULT_SHIPPING_FEE,
+} from "@/lib/utils";
 import { clientIp, rateLimit } from "@/lib/rate-limit";
 
 // Public endpoint (guest checkout). Deliberately NOT covered by the auth middleware.
@@ -97,8 +101,8 @@ export async function POST(request: Request) {
         const shippingFee = Math.round(
           calculateShipping(
             subtotal,
-            settings?.shippingFee ?? 0,
-            settings?.freeShippingThreshold ?? null
+            settings?.shippingFee ?? DEFAULT_SHIPPING_FEE,
+            settings ? settings.freeShippingThreshold : DEFAULT_FREE_SHIPPING_THRESHOLD
           )
         );
 

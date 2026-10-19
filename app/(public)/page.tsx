@@ -8,7 +8,7 @@ import { EmptyState } from "@/components/ui/empty-state";
 import { HeroSlideshow } from "@/components/public/HeroSlideshow";
 import { CategoryAccordion } from "@/components/public/CategoryAccordion";
 import { ProductCard } from "@/components/public/ProductCard";
-import { formatPrice } from "@/lib/utils";
+import { DEFAULT_FREE_SHIPPING_THRESHOLD, formatPrice } from "@/lib/utils";
 
 export const dynamic = "force-dynamic";
 
@@ -37,7 +37,9 @@ export default async function HomePage() {
     prisma.storeSettings.findUnique({ where: { id: "store" } }),
   ]);
 
-  const freeShippingThreshold = settings?.freeShippingThreshold ?? null;
+  const freeShippingThreshold = settings
+    ? settings.freeShippingThreshold
+    : DEFAULT_FREE_SHIPPING_THRESHOLD;
 
   // Banner photos for the hero.
   const heroSlides = [

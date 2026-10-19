@@ -102,7 +102,7 @@ model StoreSettings {
   phone                 String?
   email                 String?
   whatsapp              String?
-  shippingFee           Float    @default(0)
-  freeShippingThreshold Float?
+  shippingFee           Float    @default(200)
+  freeShippingThreshold Float?   @default(2000)
   updatedAt             DateTime @updatedAt
 }

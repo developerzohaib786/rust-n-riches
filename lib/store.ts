@@ -1,5 +1,5 @@
 import { prisma } from "@/lib/prisma";
-import { formatPrice } from "@/lib/utils";
+import { DEFAULT_FREE_SHIPPING_THRESHOLD, DEFAULT_SHIPPING_FEE, formatPrice } from "@/lib/utils";
 
 export const DEFAULT_STORE_NAME = "AQSAURA";
 export const SUPPORT_EMAIL = "aqsaura2026@gmail.com";
@@ -14,8 +14,8 @@ export async function getStoreInfo() {
     phone: settings?.phone ?? null,
     email: settings?.email ?? null,
     whatsapp: settings?.whatsapp ?? null,
-    shippingFee: settings?.shippingFee ?? 0,
-    freeShippingThreshold: settings?.freeShippingThreshold ?? null,
+    shippingFee: settings?.shippingFee ?? DEFAULT_SHIPPING_FEE,
+    freeShippingThreshold: settings ? settings.freeShippingThreshold : DEFAULT_FREE_SHIPPING_THRESHOLD,
   };
 }
 

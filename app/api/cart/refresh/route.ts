@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 
 import { prisma } from "@/lib/prisma";
 import { cartRefreshSchema } from "@/lib/validations";
+import { DEFAULT_FREE_SHIPPING_THRESHOLD, DEFAULT_SHIPPING_FEE } from "@/lib/utils";
 
 // Public endpoint: lets the cart re-sync live prices and stock. Deliberately NOT covered
 // by the auth middleware (unlike /api/products).
@@ -35,7 +36,7 @@ export async function POST(request: Request) {
 
   return NextResponse.json({
     products,
-    shippingFee: settings?.shippingFee ?? 0,
-    freeShippingThreshold: settings?.freeShippingThreshold ?? null,
+    shippingFee: settings?.shippingFee ?? DEFAULT_SHIPPING_FEE,
+    freeShippingThreshold: settings ? settings.freeShippingThreshold : DEFAULT_FREE_SHIPPING_THRESHOLD,
   });
 }

@@ -51,6 +51,10 @@ export const ORDER_TRANSITIONS: Record<OrderStatusValue, OrderStatusValue[]> = {
   CANCELLED: [],
 };
 
+// Used when the store settings row has not been saved yet.
+export const DEFAULT_SHIPPING_FEE = 200;
+export const DEFAULT_FREE_SHIPPING_THRESHOLD = 2000;
+
 // Shipping is free once the subtotal reaches the store's threshold (if one is set).
 export function calculateShipping(
   subtotal: number,
