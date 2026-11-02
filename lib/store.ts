@@ -28,7 +28,7 @@ export function describeDelivery(store: Pick<StoreInfo, "shippingFee" | "freeShi
 
   if (shippingFee === 0) return "Delivery is free on all orders.";
   if (freeShippingThreshold != null) {
-    return `Delivery costs ${formatPrice(shippingFee)}, and is free on orders of ${formatPrice(freeShippingThreshold)} or more.`;
+    return `Delivery costs ${formatPrice(shippingFee)}, and is free on shopping of ${formatPrice(freeShippingThreshold)} and above.`;
   }
   return `Delivery costs ${formatPrice(shippingFee)} per order.`;
 }

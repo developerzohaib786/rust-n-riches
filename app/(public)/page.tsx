@@ -85,7 +85,7 @@ export default async function HomePage() {
               <p className="text-sm font-medium text-text-primary">Home Delivery</p>
               <p className="text-sm text-text-secondary">
                 {freeShippingThreshold != null
-                  ? `Free delivery on orders over ${formatPrice(freeShippingThreshold)}`
+                  ? `Delivery charges are free on shopping of ${formatPrice(freeShippingThreshold)} and above`
                   : "Straight to your doorstep"}
               </p>
             </div>
@@ -180,7 +180,7 @@ export default async function HomePage() {
             </h2>
             <p className="mt-4 max-w-lg text-base text-white/80">
               {freeShippingThreshold != null
-                ? `Fill your bag and get free delivery on orders over ${formatPrice(freeShippingThreshold)}.`
+                ? `Delivery charges are free on shopping of ${formatPrice(freeShippingThreshold)} and above.`
                 : "Order in a few taps and we'll handle the rest."}
             </p>
             <div className="mt-8 flex flex-wrap gap-3">
