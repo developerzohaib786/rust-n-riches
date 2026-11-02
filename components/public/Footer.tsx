@@ -1,5 +1,7 @@
 import Link from "next/link";
 
+import { SUPPORT_PHONE } from "@/lib/store";
+
 interface FooterProps {
   storeName?: string;
   address?: string | null;
@@ -51,7 +53,9 @@ export function Footer({ storeName = "AQSAURA", address, phone, email }: FooterP
         <div className="flex flex-col gap-1">
           <span className="font-medium text-white">Contact</span>
           {address && <span>{address}</span>}
-          {phone && <span>{phone}</span>}
+          <a href={`tel:${(phone || SUPPORT_PHONE).replace(/[^\d+]/g, "")}`} className="hover:text-white">
+            {phone || SUPPORT_PHONE}
+          </a>
           {email && <span>{email}</span>}
         </div>
       </div>

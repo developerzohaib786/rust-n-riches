@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { EmptyState } from "@/components/ui/empty-state";
 import { HeroSlideshow } from "@/components/public/HeroSlideshow";
 import { CategoryAccordion } from "@/components/public/CategoryAccordion";
+import { NewArrivalsPopup } from "@/components/public/NewArrivalsPopup";
 import { ProductCard } from "@/components/public/ProductCard";
 import { DEFAULT_FREE_SHIPPING_THRESHOLD, formatPrice } from "@/lib/utils";
 
@@ -16,7 +17,7 @@ export default async function HomePage() {
   const [featuredProducts, categories, settings] = await Promise.all([
     prisma.product.findMany({
       where: { isActive: true },
-      take: 4, // one row on desktop
+      take: 6, // 4 for the bestsellers row, all 6 for the new-arrivals popup
       orderBy: { createdAt: "desc" },
     }),
     prisma.category.findMany({
@@ -49,6 +50,14 @@ export default async function HomePage() {
 
   return (
     <div>
+      <NewArrivalsPopup
+        products={featuredProducts.map((p) => ({
+          id: p.id,
+          name: p.name,
+          imageUrl: p.imageUrl,
+          price: formatPrice(p.price),
+        }))}
+      />
       <section className="relative isolate overflow-hidden border-b border-border bg-[#f3ebe0]">
         <HeroSlideshow slides={heroSlides} />
         <div className="relative mx-auto flex min-h-[calc(100svh-4rem)] max-w-6xl flex-col items-start justify-end px-6 py-16 text-left">
@@ -143,7 +152,7 @@ export default async function HomePage() {
         ) : (
           // A single row: four across on desktop, swipeable sideways on smaller screens.
           <div className="-mx-6 mt-6 flex snap-x gap-6 overflow-x-auto px-6 pb-2 lg:mx-0 lg:grid lg:grid-cols-4 lg:overflow-visible lg:px-0 lg:pb-0">
-            {featuredProducts.map((product) => (
+            {featuredProducts.slice(0, 4).map((product) => (
               <div key={product.id} className="w-64 shrink-0 snap-start lg:w-auto">
                 <ProductCard product={product} />
               </div>

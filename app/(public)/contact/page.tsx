@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Mail, MapPin, MessageCircle, Phone } from "lucide-react";
 
 import { prisma } from "@/lib/prisma";
-import { SUPPORT_EMAIL } from "@/lib/store";
+import { SUPPORT_EMAIL, SUPPORT_PHONE } from "@/lib/store";
 import { Card, CardContent } from "@/components/ui/card";
 
 export const dynamic = "force-dynamic";
@@ -12,14 +12,15 @@ export const metadata: Metadata = { title: "Contact Us" };
 export default async function ContactPage() {
   const settings = await prisma.storeSettings.findUnique({ where: { id: "store" } });
   const email = settings?.email || SUPPORT_EMAIL;
+  const phone = settings?.phone || SUPPORT_PHONE;
   const whatsappDigits = settings?.whatsapp?.replace(/\D/g, "");
 
   const items = [
-    settings?.phone && {
+    {
       icon: Phone,
       label: "Phone",
-      value: settings.phone,
-      href: `tel:${settings.phone.replace(/[^\d+]/g, "")}`,
+      value: phone,
+      href: `tel:${phone.replace(/[^\d+]/g, "")}`,
     },
     whatsappDigits && {
       icon: MessageCircle,
