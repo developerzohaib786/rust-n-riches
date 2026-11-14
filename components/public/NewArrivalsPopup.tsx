@@ -21,7 +21,6 @@ export interface NewArrival {
   price: string;
 }
 
-const STORAGE_KEY = "aqs-new-arrivals-seen";
 const SWIPE_THRESHOLD = 90; // px dragged before a card is swiped away
 const TAP_TOLERANCE = 6; // px of movement still counted as a click
 const VISIBLE_CARDS = 5;
@@ -36,19 +35,7 @@ export function NewArrivalsPopup({ products }: { products: NewArrival[] }) {
 
   useEffect(() => {
     if (products.length === 0) return;
-    try {
-      if (sessionStorage.getItem(STORAGE_KEY)) return;
-    } catch {
-      // storage unavailable: just show it
-    }
-    const timer = setTimeout(() => {
-      try {
-        sessionStorage.setItem(STORAGE_KEY, "1");
-      } catch {
-        // ignore
-      }
-      setOpen(true);
-    }, 800);
+    const timer = setTimeout(() => setOpen(true), 800);
     return () => clearTimeout(timer);
   }, [products.length]);
 
