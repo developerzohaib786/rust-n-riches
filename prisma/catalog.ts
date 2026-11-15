@@ -9,8 +9,6 @@ export interface CatalogProduct {
   unit: string;
   stock: number;
   images: string[];
-  // Name of the pack/stack product this single item can also be bought as.
-  packName?: string;
 }
 
 export interface CatalogCategory {
@@ -255,7 +253,6 @@ export const CATALOG: CatalogCategory[] = [
         unit: "piece",
         stock: 20,
         images: [],
-        packName: "Ruby Flame Enamel Bangles (Pack of 4)",
       },
       {
         name: "Ruby Flame Enamel Bangles (Pack of 4)",
@@ -277,7 +274,6 @@ export const CATALOG: CatalogCategory[] = [
         unit: "piece",
         stock: 20,
         images: [],
-        packName: "Lavender Blush Enamel Bangles (Pack of 4)",
       },
       {
         name: "Lavender Blush Enamel Bangles (Pack of 4)",
@@ -299,7 +295,6 @@ export const CATALOG: CatalogCategory[] = [
         unit: "piece",
         stock: 20,
         images: [],
-        packName: "Berry Blush Enamel Bangles (Pack of 4)",
       },
       {
         name: "Berry Blush Enamel Bangles (Pack of 4)",
@@ -321,7 +316,6 @@ export const CATALOG: CatalogCategory[] = [
         unit: "piece",
         stock: 20,
         images: [],
-        packName: "Sky Azure Enamel Bangles (Pack of 4)",
       },
       {
         name: "Sky Azure Enamel Bangles (Pack of 4)",
@@ -343,7 +337,6 @@ export const CATALOG: CatalogCategory[] = [
         unit: "piece",
         stock: 20,
         images: [],
-        packName: "Empress Rings Stack (5 Rings)",
       },
       {
         name: "Empress Rings Stack (5 Rings)",

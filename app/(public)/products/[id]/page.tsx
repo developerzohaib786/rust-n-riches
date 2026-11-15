@@ -11,7 +11,6 @@ export const dynamic = "force-dynamic";
 
 interface ProductDetailPageProps {
   params: { id: string };
-  searchParams: { option?: string };
 }
 
 export async function generateMetadata({ params }: ProductDetailPageProps): Promise<Metadata> {
@@ -23,7 +22,7 @@ export async function generateMetadata({ params }: ProductDetailPageProps): Prom
   return { title: product.name, description: product.description ?? undefined };
 }
 
-export default async function ProductDetailPage({ params, searchParams }: ProductDetailPageProps) {
+export default async function ProductDetailPage({ params }: ProductDetailPageProps) {
   const product = await prisma.product.findFirst({
     where: { id: params.id, isActive: true },
     include: { category: true },
@@ -31,37 +30,22 @@ export default async function ProductDetailPage({ params, searchParams }: Produc
 
   if (!product) notFound();
 
-  // A single item links to its pack (packProductId); a pack is found by the reverse lookup.
-  const [pack, single] = await Promise.all([
-    product.packProductId
-      ? prisma.product.findFirst({ where: { id: product.packProductId, isActive: true } })
-      : null,
-    prisma.product.findFirst({ where: { packProductId: product.id, isActive: true } }),
-  ]);
-  const toInput = (p: { id: string; name: string; price: number; unit: string; imageUrl: string | null; stock: number }) => ({
-    productId: p.id,
-    name: p.name,
-    price: p.price,
-    unit: p.unit,
-    imageUrl: p.imageUrl,
-    stock: p.stock,
+  const toInput = (pack: boolean) => ({
+    productId: product.id,
+    name: product.name,
+    price: pack ? product.packPrice! : product.price,
+    unit: pack ? `pack of ${product.packSize}` : product.unit,
+    imageUrl: product.imageUrl,
+    stock: product.stock,
+    packSize: pack ? product.packSize : null,
   });
-  const options: PurchaseOption[] = pack
+  const hasPack = Boolean(product.packSize && product.packPrice);
+  const options: PurchaseOption[] = hasPack
     ? [
-        { label: "Single", product: toInput(product) },
-        { label: `Full set (${pack.unit})`, product: toInput(pack) },
+        { label: "Single", product: toInput(false) },
+        { label: `Pack of ${product.packSize}`, product: toInput(true) },
       ]
-    : single
-      ? [
-          { label: "Single", product: toInput(single) },
-          { label: `Full set (${product.unit})`, product: toInput(product) },
-        ]
-      : [{ label: product.unit, product: toInput(product) }];
-  // ?option=set keeps the "full set" choice selected when the customer switches colour.
-    const initialIndex = single ? 1 : searchParams.option === "set" && pack ? 1 : 0;
-
-  // Colours come from this product; a single and its pack fall back to each other's list.
-  const colors = product.colors.length ? product.colors : (single?.colors ?? pack?.colors ?? []);
+    : [{ label: product.unit, product: toInput(false) }];
 
   const gallery = [product.imageUrl, ...(product.images ?? [])].filter((url): url is string => Boolean(url));
 
@@ -98,7 +82,7 @@ export default async function ProductDetailPage({ params, searchParams }: Produc
           )}
 
           <div className="mt-2">
-            <PurchaseOptions key={`${product.id}-${initialIndex}`} options={options} initial={initialIndex} colors={colors} />
+            <PurchaseOptions options={options} colors={product.colors} />
           </div>
         </div>
       </div>

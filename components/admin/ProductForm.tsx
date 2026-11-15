@@ -58,6 +58,8 @@ const EMPTY_DEFAULTS: ProductInput = {
   imageUrl: "",
   images: [],
   colors: [],
+  packSize: null,
+  packPrice: null,
   categoryId: "",
   isActive: true,
 };
@@ -239,6 +241,50 @@ export function ProductForm({ mode, productId, categories: initialCategories, de
                         placeholder="0"
                         {...field}
                         onChange={(e) => field.onChange(e.target.valueAsNumber)}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="packSize"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Pack size (optional)</FormLabel>
+                    <FormControl>
+                      <Input
+                        type="number"
+                        min={2}
+                        placeholder="e.g. 4 for a pack of 4"
+                        value={field.value ?? ""}
+                        onChange={(e) =>
+                          field.onChange(e.target.value === "" ? null : e.target.valueAsNumber)
+                        }
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="packPrice"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Pack price (optional)</FormLabel>
+                    <FormControl>
+                      <Input
+                        type="number"
+                        step="0.01"
+                        placeholder="Price of one whole pack"
+                        value={field.value ?? ""}
+                        onChange={(e) =>
+                          field.onChange(e.target.value === "" ? null : e.target.valueAsNumber)
+                        }
                       />
                     </FormControl>
                     <FormMessage />

@@ -13,7 +13,9 @@ export interface CartLine {
   stock: number;
   // Optional colour chosen by the customer; null/undefined means the default.
   color?: string | null;
-  colors?: string[]; // colours the product currently offers (kept fresh by refresh())
+  // Set when this line is the product's pack: pieces per pack. price/unit are the pack's.
+  // Quantity then counts packs, and stock (in pieces) is shared with the single option.
+  packSize?: number | null;
   quantity: number;
   // Set by refresh() when the product was deactivated or deleted since it was added.
   unavailable?: boolean;
@@ -41,15 +43,30 @@ interface CartContextValue {
 const STORAGE_KEY = "aqsaura-cart-v1";
 
 // A cart line is identified by product + colour, so the same product in two colours is two lines.
-export function lineKey(line: { productId: string; color?: string | null }) {
-  return `${line.productId}::${line.color ?? ""}`;
+export function lineKey(line: { productId: string; color?: string | null; packSize?: number | null }) {
+  return `${line.productId}::${line.color ?? ""}::${line.packSize ?? ""}`;
+}
+
+// Pieces of stock one unit of this line uses (a pack uses packSize pieces).
+export function piecesPer(line: { packSize?: number | null }) {
+  return line.packSize ?? 1;
+}
+
+// Most units of `line` that fit, given stock and what other lines of the same product use.
+function limitFor(line: { stock: number; packSize?: number | null }, usedByOthers: number) {
+  return Math.max(
+    0,
+    Math.min(CHECKOUT_MAX_QUANTITY, Math.floor((line.stock - usedByOthers) / piecesPer(line)))
+  );
+}
+
+function piecesUsed(lines: CartLine[], productId: string, exceptKey?: string) {
+  return lines
+    .filter((l) => l.productId === productId && lineKey(l) !== exceptKey)
+    .reduce((sum, l) => sum + l.quantity * piecesPer(l), 0);
 }
 
 const CartContext = React.createContext<CartContextValue | null>(null);
-
-function maxFor(stock: number) {
-  return Math.max(0, Math.min(stock, CHECKOUT_MAX_QUANTITY));
-}
 
 function readStorage(): CartLine[] {
   try {
@@ -104,11 +121,8 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     const current = linesRef.current;
     const key = lineKey(product);
     const existing = current.find((line) => lineKey(line) === key);
-    // Stock is per product, so quantities in other colours of it count against the limit too.
-    const inOtherColors = current
-      .filter((line) => line.productId === product.productId && lineKey(line) !== key)
-      .reduce((sum, line) => sum + line.quantity, 0);
-    const limit = Math.max(0, maxFor(product.stock) - inOtherColors);
+    // Stock is per product, so other colours and the single/pack option count against it too.
+    const limit = limitFor(product, piecesUsed(current, product.productId, key));
     const desired = (existing?.quantity ?? 0) + quantity;
     const next = Math.min(desired, limit);
     const added = Math.max(0, next - (existing?.quantity ?? 0));
@@ -138,7 +152,8 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       prev.flatMap((line) => {
         if (lineKey(line) !== key) return [line];
         if (quantity <= 0) return [];
-        return [{ ...line, quantity: Math.min(quantity, Math.max(1, maxFor(line.stock))) }];
+        const limit = limitFor(line, piecesUsed(prev, line.productId, key));
+        return [{ ...line, quantity: Math.min(quantity, Math.max(1, limit)) }];
       })
     );
   }, []);
@@ -163,7 +178,14 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       if (!res.ok) return null;
 
       const data: {
-        products: Array<CartProductInput & { id: string; isActive: boolean; colors: string[] }>;
+        products: Array<
+          CartProductInput & {
+            id: string;
+            isActive: boolean;
+            colors: string[];
+            packPrice: number | null;
+          }
+        >;
         shippingFee: number;
         freeShippingThreshold: number | null;
       } = await res.json();
@@ -179,14 +201,21 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
           if (line.color && !fresh.colors.some((c) => c.toLowerCase() === line.color!.toLowerCase())) {
             return { ...line, unavailable: true, stock: fresh.stock };
           }
+          // The pack was removed or resized since it was added.
+          if (line.packSize && (fresh.packSize !== line.packSize || !fresh.packPrice)) {
+            return { ...line, unavailable: true, stock: fresh.stock };
+          }
+          if (fresh.stock < piecesPer(line)) {
+            return { ...line, unavailable: true, stock: fresh.stock };
+          }
           return {
             ...line,
             name: fresh.name,
-            price: fresh.price,
-            unit: fresh.unit,
+            price: line.packSize ? fresh.packPrice! : fresh.price,
+            unit: line.packSize ? line.unit : fresh.unit,
             imageUrl: fresh.imageUrl,
             stock: fresh.stock,
-            quantity: Math.min(line.quantity, maxFor(fresh.stock)),
+            quantity: Math.min(line.quantity, Math.max(1, limitFor({ stock: fresh.stock, packSize: line.packSize }, 0))),
             unavailable: false,
           };
         })

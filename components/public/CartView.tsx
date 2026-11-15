@@ -10,7 +10,7 @@ import { Card } from "@/components/ui/card";
 import { EmptyState } from "@/components/ui/empty-state";
 import { Skeleton } from "@/components/ui/skeleton";
 import { CartSummary } from "@/components/public/CartSummary";
-import { lineKey, useCart, type ShippingRules } from "@/lib/cart";
+import { lineKey, piecesPer, useCart, type ShippingRules } from "@/lib/cart";
 import { calculateShipping, formatPrice } from "@/lib/utils";
 
 export function CartView() {
@@ -126,7 +126,13 @@ export function CartView() {
                         size="icon"
                         className="h-9 w-9"
                         aria-label="Increase quantity"
-                        disabled={line.quantity >= line.stock}
+                        disabled={
+                          lines
+                            .filter((l) => l.productId === line.productId)
+                            .reduce((sum, l) => sum + l.quantity * piecesPer(l), 0) +
+                            piecesPer(line) >
+                          line.stock
+                        }
                         onClick={() => setQuantity(lineKey(line), line.quantity + 1)}
                       >
                         <Plus />
@@ -137,11 +143,7 @@ export function CartView() {
                     </span>
                   </div>
                 )}
-                {!line.unavailable && line.quantity >= line.stock && (
-                  <p className="text-xs text-text-secondary">
-                    Only {line.stock} {line.unit} in stock
-                  </p>
-                )}
+
               </div>
             </Card>
           ))}

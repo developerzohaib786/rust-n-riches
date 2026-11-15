@@ -36,7 +36,9 @@ model Product {
   colorGroup  String?     // legacy, no longer used (replaced by colors); safe to drop later
   colorName   String?     // legacy, no longer used
   colors      String[]    @default([]) // optional colour choices shown to customers, e.g. "Ruby Flame"
-  packProductId String?   // links a single item to its pack/stack product (e.g. 1 bangle -> pack of 4)
+  packProductId String?   // legacy, no longer used
+  packSize    Int?        // optional pack: number of items in one pack, e.g. 4
+  packPrice   Float?      // price of one pack
   createdAt   DateTime    @default(now())
   updatedAt   DateTime    @updatedAt
   orderItems  OrderItem[]
@@ -93,6 +95,7 @@ model OrderItem {
   name      String  // snapshot of the product name at time of order
   unit      String  // snapshot of the product unit at time of order
   color     String? // colour the customer picked; null means default (none chosen)
+  packSize  Int?    // set when bought as a pack: items in one pack (quantity counts packs)
   price     Float   // snapshot of the unit price at time of order
   quantity  Int
   total     Float

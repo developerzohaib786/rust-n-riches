@@ -41,33 +41,48 @@ export async function POST(request: Request) {
     return NextResponse.json({ id: "ok" }, { status: 201 });
   }
 
-  // Merge duplicate lines for the same product so stock is checked against the total.
-  const quantities = new Map<string, number>();
-  // One order line per product + colour; a missing colour means the default.
-  const lineQuantities = new Map<string, { productId: string; color: string | null; quantity: number }>();
+  // One order line per product + colour + buying mode (single or pack); a missing colour
+  // means the default. Duplicate lines are merged so stock is checked against the total.
+  const lineQuantities = new Map<
+    string,
+    { productId: string; color: string | null; pack: boolean; quantity: number }
+  >();
   for (const item of items) {
-    quantities.set(item.productId, (quantities.get(item.productId) ?? 0) + item.quantity);
     const color = item.color?.trim() || null;
-    const key = `${item.productId}::${color ?? ""}`;
+    const pack = item.pack === true;
+    const key = `${item.productId}::${color ?? ""}::${pack ? "pack" : ""}`;
     const line = lineQuantities.get(key);
     if (line) line.quantity += item.quantity;
-    else lineQuantities.set(key, { productId: item.productId, color, quantity: item.quantity });
+    else lineQuantities.set(key, { productId: item.productId, color, pack, quantity: item.quantity });
   }
+  const productIds = Array.from(new Set(items.map((item) => item.productId)));
 
   try {
     const order = await prisma.$transaction(
       async (tx) => {
-        const dbProducts = await tx.product.findMany({
-          where: { id: { in: Array.from(quantities.keys()) } },
-        });
+        const dbProducts = await tx.product.findMany({ where: { id: { in: productIds } } });
         const productsById = new Map(dbProducts.map((p) => [p.id, p]));
 
-        for (const [productId, quantity] of Array.from(quantities.entries())) {
+        // Stock is counted in single pieces; a pack uses packSize pieces.
+        const units = new Map<string, number>();
+        const lines = Array.from(lineQuantities.values());
+        for (const { productId, color, pack, quantity } of lines) {
           const product = productsById.get(productId);
           if (!product || !product.isActive) {
             throw new ApiError(400, "One of the items in your cart is no longer available");
           }
-          if (product.stock < quantity) {
+          if (pack && (!product.packSize || !product.packPrice)) {
+            throw new ApiError(400, `The pack option for ${product.name} is no longer available`);
+          }
+          if (color && !product.colors.some((c) => c.toLowerCase() === color.toLowerCase())) {
+            throw new ApiError(400, `${color} is no longer available for ${product.name}`);
+          }
+          units.set(productId, (units.get(productId) ?? 0) + quantity * (pack ? product.packSize! : 1));
+        }
+
+        for (const [productId, needed] of Array.from(units.entries())) {
+          const product = productsById.get(productId)!;
+          if (product.stock < needed) {
             throw new ApiError(
               400,
               product.stock === 0
@@ -77,19 +92,12 @@ export async function POST(request: Request) {
           }
         }
 
-        for (const { productId, color } of Array.from(lineQuantities.values())) {
-          const product = productsById.get(productId);
-          if (color && product && !product.colors.some((c) => c.toLowerCase() === color.toLowerCase())) {
-            throw new ApiError(400, `${color} is no longer available for ${product.name}`);
-          }
-        }
-
         // The `stock >= qty` guard in the WHERE clause makes the decrement atomic, so two
         // concurrent checkouts can never oversell the last units.
-        for (const [productId, quantity] of Array.from(quantities.entries())) {
+        for (const [productId, needed] of Array.from(units.entries())) {
           const result = await tx.product.updateMany({
-            where: { id: productId, isActive: true, stock: { gte: quantity } },
-            data: { stock: { decrement: quantity } },
+            where: { id: productId, isActive: true, stock: { gte: needed } },
+            data: { stock: { decrement: needed } },
           });
           if (result.count !== 1) {
             const product = productsById.get(productId)!;
@@ -97,16 +105,18 @@ export async function POST(request: Request) {
           }
         }
 
-        const orderItems = Array.from(lineQuantities.values()).map(({ productId, color, quantity }) => {
+        const orderItems = lines.map(({ productId, color, pack, quantity }) => {
           const product = productsById.get(productId)!;
+          const price = pack ? product.packPrice! : product.price;
           return {
             productId,
-            name: product.name,
-            unit: product.unit,
+            name: pack ? `${product.name} (Pack of ${product.packSize})` : product.name,
+            unit: pack ? `pack of ${product.packSize}` : product.unit,
             color: color ? product.colors.find((c) => c.toLowerCase() === color.toLowerCase()) ?? color : null,
-            price: product.price,
+            packSize: pack ? product.packSize : null,
+            price,
             quantity,
-            total: Math.round(product.price * quantity),
+            total: Math.round(price * quantity),
           };
         });
 

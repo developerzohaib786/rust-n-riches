@@ -86,7 +86,7 @@ export function PurchaseOptions({
           {formatPrice(product.price)}
           <span className="ml-1 text-base font-normal text-text-secondary">/ {product.unit}</span>
         </p>
-        {product.stock > 0 ? (
+        {product.stock >= (product.packSize ?? 1) ? (
           <Badge variant="success">In Stock</Badge>
         ) : (
           <Badge variant="danger">Out of Stock</Badge>

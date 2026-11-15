@@ -5,7 +5,7 @@ import { Minus, Plus, ShoppingCart } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
-import { useCart, type CartProductInput } from "@/lib/cart";
+import { piecesPer, useCart, type CartProductInput } from "@/lib/cart";
 
 interface AddToCartButtonProps {
   product: CartProductInput;
@@ -19,11 +19,13 @@ export function AddToCartButton({ product, variant = "compact" }: AddToCartButto
   const [quantity, setQuantity] = useState(1);
 
   // Stock is per product, so count every colour of it already in the cart.
-  const inCart = lines
+  const per = piecesPer(product);
+  const piecesInCart = lines
     .filter((line) => line.productId === product.productId)
-    .reduce((sum, line) => sum + line.quantity, 0);
-  const soldOut = product.stock <= 0;
-  const maxQuantity = Math.max(1, product.stock - inCart);
+    .reduce((sum, line) => sum + line.quantity * piecesPer(line), 0);
+  const inCart = Math.floor(piecesInCart / per);
+  const soldOut = product.stock < per;
+  const maxQuantity = Math.max(1, Math.floor((product.stock - piecesInCart) / per));
 
   function handleAdd() {
     const { added, capped } = addItem(product, variant === "full" ? quantity : 1);
@@ -32,7 +34,7 @@ export function AddToCartButton({ product, variant = "compact" }: AddToCartButto
       toast({
         variant: "destructive",
         title: "Can't add more",
-        description: `You already have all ${product.stock} ${product.unit} available in your cart.`,
+        description: `You already have all the available stock of ${product.name} in your cart.`,
       });
       return;
     }
@@ -40,7 +42,7 @@ export function AddToCartButton({ product, variant = "compact" }: AddToCartButto
     toast({
       title: "Added to cart",
       description: capped
-        ? `${product.name}: only ${product.stock} ${product.unit} available, so your cart was capped.`
+        ? `${product.name}: only limited stock is available, so your cart was capped.`
         : `${added} × ${product.name}`,
     });
     setQuantity(1);

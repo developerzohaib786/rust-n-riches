@@ -88,6 +88,7 @@ export function CheckoutForm() {
           items: lines.map((line) => ({
             productId: line.productId,
             color: line.color ?? null,
+            pack: Boolean(line.packSize),
             quantity: line.quantity,
           })),
           website: honeypot.current?.value ?? "",

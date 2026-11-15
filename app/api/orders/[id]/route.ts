@@ -62,7 +62,8 @@ export async function PATCH(request: Request, { params }: { params: { id: string
           for (const item of order.items) {
             await tx.product.update({
               where: { id: item.productId },
-              data: { stock: { increment: item.quantity } },
+              // A pack order item counts packs, each holding packSize pieces of stock.
+              data: { stock: { increment: item.quantity * (item.packSize ?? 1) } },
             });
           }
         }

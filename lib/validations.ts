@@ -7,7 +7,7 @@ export const loginSchema = z.object({
 
 export type LoginInput = z.infer<typeof loginSchema>;
 
-export const productSchema = z.object({
+export const productBaseSchema = z.object({
   name: z.string().min(1, "Product name is required"),
   description: z.string().optional(),
   price: z.number({ message: "Enter a valid price" }).positive("Price must be greater than 0"),
@@ -21,7 +21,15 @@ export const productSchema = z.object({
   colors: z.array(z.string().trim().min(1).max(40, "Colour name is too long")).max(30, "Too many colours").optional(),
   categoryId: z.string().min(1, "Category is required"),
   isActive: z.boolean(),
+  // Optional pack: "pack of {packSize}" sold at packPrice. Both or neither.
+  packSize: z.number({ message: "Enter a valid pack size" }).int("Pack size must be a whole number").min(2, "Pack size must be at least 2").nullish(),
+  packPrice: z.number({ message: "Enter a valid pack price" }).positive("Pack price must be greater than 0").nullish(),
 });
+
+export const productSchema = productBaseSchema.refine(
+  (v) => (v.packSize == null) === (v.packPrice == null),
+  { message: "Enter both the pack size and the pack price, or leave both empty", path: ["packPrice"] }
+);
 
 export type ProductInput = z.infer<typeof productSchema>;
 
@@ -52,6 +60,8 @@ export const checkoutItemSchema = z.object({
   productId: z.string().min(1),
   // Optional colour choice; omitted means the default.
   color: z.string().trim().max(40).nullish(),
+  // true when bought as the product's pack (price and size come from the database).
+  pack: z.boolean().optional(),
   quantity: z
     .number()
     .int()

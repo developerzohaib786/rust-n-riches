@@ -36,7 +36,7 @@ async function seedCatalog() {
       (await prisma.category.findFirst({ where: { name: category } })) ??
       (await prisma.category.create({ data: { name: category } }));
 
-    for (const { images, packName: _packName, ...product } of products) {
+    for (const { images, ...product } of products) {
       const found = await prisma.product.findFirst({ where: { name: product.name } });
       if (!found) {
         await prisma.product.create({
@@ -47,18 +47,6 @@ async function seedCatalog() {
             categoryId: existing.id,
           },
         });
-      }
-    }
-  }
-
-  // Link each single item to its pack/stack so the product page offers both.
-  for (const { products } of CATALOG) {
-    for (const { name, packName } of products) {
-      if (!packName) continue;
-      const single = await prisma.product.findFirst({ where: { name } });
-      const pack = await prisma.product.findFirst({ where: { name: packName } });
-      if (single && pack && single.packProductId !== pack.id) {
-        await prisma.product.update({ where: { id: single.id }, data: { packProductId: pack.id } });
       }
     }
   }

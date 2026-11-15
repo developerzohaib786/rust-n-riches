@@ -30,6 +30,8 @@ export async function POST(request: Request) {
       imageUrl: true,
       isActive: true,
       colors: true,
+      packSize: true,
+      packPrice: true,
     },
   });
 
