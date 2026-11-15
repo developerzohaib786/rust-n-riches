@@ -29,6 +29,7 @@ export async function POST(request: Request) {
       stock: true,
       imageUrl: true,
       isActive: true,
+      colors: true,
     },
   });
 

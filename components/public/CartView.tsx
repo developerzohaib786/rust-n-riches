@@ -10,7 +10,7 @@ import { Card } from "@/components/ui/card";
 import { EmptyState } from "@/components/ui/empty-state";
 import { Skeleton } from "@/components/ui/skeleton";
 import { CartSummary } from "@/components/public/CartSummary";
-import { useCart, type ShippingRules } from "@/lib/cart";
+import { lineKey, useCart, type ShippingRules } from "@/lib/cart";
 import { calculateShipping, formatPrice } from "@/lib/utils";
 
 export function CartView() {
@@ -64,7 +64,7 @@ export function CartView() {
       <div className="mt-6 grid grid-cols-1 gap-8 lg:grid-cols-3">
         <div className="flex flex-col gap-4 lg:col-span-2">
           {lines.map((line) => (
-            <Card key={line.productId} className="flex gap-4 p-4">
+            <Card key={lineKey(line)} className="flex gap-4 p-4">
               <div className="flex h-24 w-24 shrink-0 items-center justify-center overflow-hidden rounded-lg bg-muted">
                 {line.imageUrl ? (
                   // eslint-disable-next-line @next/next/no-img-element
@@ -86,10 +86,13 @@ export function CartView() {
                     <p className="text-sm text-text-secondary">
                       {formatPrice(line.price)} / {line.unit}
                     </p>
+                    {line.color && (
+                      <p className="text-sm text-text-secondary">Color: {line.color}</p>
+                    )}
                   </div>
                   <button
                     type="button"
-                    onClick={() => removeItem(line.productId)}
+                    onClick={() => removeItem(lineKey(line))}
                     className="shrink-0 text-text-secondary hover:text-danger"
                     aria-label={`Remove ${line.name}`}
                   >
@@ -110,7 +113,7 @@ export function CartView() {
                         size="icon"
                         className="h-9 w-9"
                         aria-label="Decrease quantity"
-                        onClick={() => setQuantity(line.productId, line.quantity - 1)}
+                        onClick={() => setQuantity(lineKey(line), line.quantity - 1)}
                       >
                         <Minus />
                       </Button>
@@ -124,7 +127,7 @@ export function CartView() {
                         className="h-9 w-9"
                         aria-label="Increase quantity"
                         disabled={line.quantity >= line.stock}
-                        onClick={() => setQuantity(line.productId, line.quantity + 1)}
+                        onClick={() => setQuantity(lineKey(line), line.quantity + 1)}
                       >
                         <Plus />
                       </Button>

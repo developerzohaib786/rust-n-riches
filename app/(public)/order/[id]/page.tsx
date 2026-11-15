@@ -112,7 +112,8 @@ export default async function OrderPage({ params }: OrderPageProps) {
           {order.items.map((item) => (
             <div key={item.id} className="flex justify-between gap-4">
               <span className="text-text-secondary">
-                {item.quantity} × {item.name}{" "}
+                {item.quantity} × {item.name}
+                {item.color ? ` (${item.color})` : ""}{" "}
                 <span className="text-xs">
                   ({formatPrice(item.price)} / {item.unit})
                 </span>

@@ -9,6 +9,8 @@ export interface CatalogProduct {
   unit: string;
   stock: number;
   images: string[];
+  // Name of the pack/stack product this single item can also be bought as.
+  packName?: string;
 }
 
 export interface CatalogCategory {
@@ -19,7 +21,8 @@ export interface CatalogCategory {
 const img = (slug: string, count: number) =>
   Array.from({ length: count }, (_, i) => `/products/${slug}/${i + 1}.jpg`);
 
-export const CATALOG: CatalogCategory[] = [
+// Old sample products from the repo photos. NOT seeded any more: the live store has its own products.
+export const SAMPLE_CATALOG: CatalogCategory[] = [
   {
     category: "Stud Earrings",
     products: [
@@ -235,6 +238,120 @@ export const CATALOG: CatalogCategory[] = [
         unit: "piece",
         stock: 9,
         images: img("black-crystal-swan-necklace", 4),
+      },
+    ],
+  },
+];
+
+// Seeded by `prisma db seed` with SEED_DEMO=true (skips anything that already exists).
+export const CATALOG: CatalogCategory[] = [
+  {
+    category: "Enamel Bangles - Ruby Flame (Red & Black)",
+    products: [
+      {
+        name: "Ruby Flame Enamel Bangle",
+        description: "A single enamel bangle in red and black. Buy one, or pick the pack of 4 below for a stacked look.",
+        price: 549,
+        unit: "piece",
+        stock: 20,
+        images: [],
+        packName: "Ruby Flame Enamel Bangles (Pack of 4)",
+      },
+      {
+        name: "Ruby Flame Enamel Bangles (Pack of 4)",
+        description: "A stack of 4 enamel bangles in red and black. Better value than buying them one by one.",
+        price: 1999,
+        unit: "pack of 4",
+        stock: 10,
+        images: [],
+      },
+    ],
+  },
+  {
+    category: "Enamel Bangles - Lavender Blush (Lavender & Pink)",
+    products: [
+      {
+        name: "Lavender Blush Enamel Bangle",
+        description: "A single enamel bangle in lavender and pink. Buy one, or pick the pack of 4 below for a stacked look.",
+        price: 549,
+        unit: "piece",
+        stock: 20,
+        images: [],
+        packName: "Lavender Blush Enamel Bangles (Pack of 4)",
+      },
+      {
+        name: "Lavender Blush Enamel Bangles (Pack of 4)",
+        description: "A stack of 4 enamel bangles in lavender and pink. Better value than buying them one by one.",
+        price: 1999,
+        unit: "pack of 4",
+        stock: 10,
+        images: [],
+      },
+    ],
+  },
+  {
+    category: "Enamel Bangles - Berry Blush (Magenta Purple & Pink)",
+    products: [
+      {
+        name: "Berry Blush Enamel Bangle",
+        description: "A single enamel bangle in magenta purple and pink. Buy one, or pick the pack of 4 below for a stacked look.",
+        price: 549,
+        unit: "piece",
+        stock: 20,
+        images: [],
+        packName: "Berry Blush Enamel Bangles (Pack of 4)",
+      },
+      {
+        name: "Berry Blush Enamel Bangles (Pack of 4)",
+        description: "A stack of 4 enamel bangles in magenta purple and pink. Better value than buying them one by one.",
+        price: 1999,
+        unit: "pack of 4",
+        stock: 10,
+        images: [],
+      },
+    ],
+  },
+  {
+    category: "Enamel Bangles - Sky Azure (Light Blue)",
+    products: [
+      {
+        name: "Sky Azure Enamel Bangle",
+        description: "A single enamel bangle in light blue. Buy one, or pick the pack of 4 below for a stacked look.",
+        price: 549,
+        unit: "piece",
+        stock: 20,
+        images: [],
+        packName: "Sky Azure Enamel Bangles (Pack of 4)",
+      },
+      {
+        name: "Sky Azure Enamel Bangles (Pack of 4)",
+        description: "A stack of 4 enamel bangles in light blue. Better value than buying them one by one.",
+        price: 1999,
+        unit: "pack of 4",
+        stock: 10,
+        images: [],
+      },
+    ],
+  },
+  {
+    category: "Empress Rings",
+    products: [
+      {
+        name: "Empress Ring",
+        description: "A single Empress ring. Wear it alone or build your own stack.",
+        price: 449,
+        unit: "piece",
+        stock: 20,
+        images: [],
+        packName: "Empress Rings Stack (5 Rings)",
+      },
+      {
+        name: "Empress Rings Stack (5 Rings)",
+        description: "A stack of 5 Empress rings, made to be worn together. Better value than buying them one by one.",
+        price: 1999,
+        unit: "stack of 5",
+        stock: 10,
+        images: [],
       },
     ],
   },

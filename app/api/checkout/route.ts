@@ -43,8 +43,15 @@ export async function POST(request: Request) {
 
   // Merge duplicate lines for the same product so stock is checked against the total.
   const quantities = new Map<string, number>();
+  // One order line per product + colour; a missing colour means the default.
+  const lineQuantities = new Map<string, { productId: string; color: string | null; quantity: number }>();
   for (const item of items) {
     quantities.set(item.productId, (quantities.get(item.productId) ?? 0) + item.quantity);
+    const color = item.color?.trim() || null;
+    const key = `${item.productId}::${color ?? ""}`;
+    const line = lineQuantities.get(key);
+    if (line) line.quantity += item.quantity;
+    else lineQuantities.set(key, { productId: item.productId, color, quantity: item.quantity });
   }
 
   try {
@@ -70,6 +77,13 @@ export async function POST(request: Request) {
           }
         }
 
+        for (const { productId, color } of Array.from(lineQuantities.values())) {
+          const product = productsById.get(productId);
+          if (color && product && !product.colors.some((c) => c.toLowerCase() === color.toLowerCase())) {
+            throw new ApiError(400, `${color} is no longer available for ${product.name}`);
+          }
+        }
+
         // The `stock >= qty` guard in the WHERE clause makes the decrement atomic, so two
         // concurrent checkouts can never oversell the last units.
         for (const [productId, quantity] of Array.from(quantities.entries())) {
@@ -83,12 +97,13 @@ export async function POST(request: Request) {
           }
         }
 
-        const orderItems = Array.from(quantities.entries()).map(([productId, quantity]) => {
+        const orderItems = Array.from(lineQuantities.values()).map(({ productId, color, quantity }) => {
           const product = productsById.get(productId)!;
           return {
             productId,
             name: product.name,
             unit: product.unit,
+            color: color ? product.colors.find((c) => c.toLowerCase() === color.toLowerCase()) ?? color : null,
             price: product.price,
             quantity,
             total: Math.round(product.price * quantity),

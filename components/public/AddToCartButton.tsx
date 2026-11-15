@@ -18,7 +18,10 @@ export function AddToCartButton({ product, variant = "compact" }: AddToCartButto
   const { toast } = useToast();
   const [quantity, setQuantity] = useState(1);
 
-  const inCart = lines.find((line) => line.productId === product.productId)?.quantity ?? 0;
+  // Stock is per product, so count every colour of it already in the cart.
+  const inCart = lines
+    .filter((line) => line.productId === product.productId)
+    .reduce((sum, line) => sum + line.quantity, 0);
   const soldOut = product.stock <= 0;
   const maxQuantity = Math.max(1, product.stock - inCart);
 

@@ -11,6 +11,9 @@ export interface CartLine {
   unit: string;
   imageUrl: string | null;
   stock: number;
+  // Optional colour chosen by the customer; null/undefined means the default.
+  color?: string | null;
+  colors?: string[]; // colours the product currently offers (kept fresh by refresh())
   quantity: number;
   // Set by refresh() when the product was deactivated or deleted since it was added.
   unavailable?: boolean;
@@ -29,13 +32,18 @@ interface CartContextValue {
   itemCount: number;
   subtotal: number;
   addItem: (product: CartProductInput, quantity?: number) => { added: number; capped: boolean };
-  setQuantity: (productId: string, quantity: number) => void;
-  removeItem: (productId: string) => void;
+  setQuantity: (key: string, quantity: number) => void;
+  removeItem: (key: string) => void;
   clear: () => void;
   refresh: () => Promise<ShippingRules | null>;
 }
 
 const STORAGE_KEY = "aqsaura-cart-v1";
+
+// A cart line is identified by product + colour, so the same product in two colours is two lines.
+export function lineKey(line: { productId: string; color?: string | null }) {
+  return `${line.productId}::${line.color ?? ""}`;
+}
 
 const CartContext = React.createContext<CartContextValue | null>(null);
 
@@ -94,8 +102,13 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
 
   const addItem = React.useCallback<CartContextValue["addItem"]>((product, quantity = 1) => {
     const current = linesRef.current;
-    const existing = current.find((line) => line.productId === product.productId);
-    const limit = maxFor(product.stock);
+    const key = lineKey(product);
+    const existing = current.find((line) => lineKey(line) === key);
+    // Stock is per product, so quantities in other colours of it count against the limit too.
+    const inOtherColors = current
+      .filter((line) => line.productId === product.productId && lineKey(line) !== key)
+      .reduce((sum, line) => sum + line.quantity, 0);
+    const limit = Math.max(0, maxFor(product.stock) - inOtherColors);
     const desired = (existing?.quantity ?? 0) + quantity;
     const next = Math.min(desired, limit);
     const added = Math.max(0, next - (existing?.quantity ?? 0));
@@ -106,10 +119,10 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     if (next <= 0) return { added: 0, capped: true };
 
     setLines((prev) => {
-      const found = prev.find((line) => line.productId === product.productId);
+      const found = prev.find((line) => lineKey(line) === key);
       if (found) {
         return prev.map((line) =>
-          line.productId === product.productId
+          lineKey(line) === key
             ? { ...line, ...product, quantity: next, unavailable: false }
             : line
         );
@@ -120,18 +133,18 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     return { added, capped: desired > limit };
   }, []);
 
-  const setQuantity = React.useCallback((productId: string, quantity: number) => {
+  const setQuantity = React.useCallback((key: string, quantity: number) => {
     setLines((prev) =>
       prev.flatMap((line) => {
-        if (line.productId !== productId) return [line];
+        if (lineKey(line) !== key) return [line];
         if (quantity <= 0) return [];
         return [{ ...line, quantity: Math.min(quantity, Math.max(1, maxFor(line.stock))) }];
       })
     );
   }, []);
 
-  const removeItem = React.useCallback((productId: string) => {
-    setLines((prev) => prev.filter((line) => line.productId !== productId));
+  const removeItem = React.useCallback((key: string) => {
+    setLines((prev) => prev.filter((line) => lineKey(line) !== key));
   }, []);
 
   const clear = React.useCallback(() => setLines([]), []);
@@ -150,7 +163,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       if (!res.ok) return null;
 
       const data: {
-        products: Array<CartProductInput & { id: string; isActive: boolean }>;
+        products: Array<CartProductInput & { id: string; isActive: boolean; colors: string[] }>;
         shippingFee: number;
         freeShippingThreshold: number | null;
       } = await res.json();
@@ -161,6 +174,10 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
           const fresh = byId.get(line.productId);
           if (!fresh || !fresh.isActive || fresh.stock <= 0) {
             return { ...line, unavailable: true, stock: fresh?.stock ?? 0 };
+          }
+          // The admin removed the colour this line was added with.
+          if (line.color && !fresh.colors.some((c) => c.toLowerCase() === line.color!.toLowerCase())) {
+            return { ...line, unavailable: true, stock: fresh.stock };
           }
           return {
             ...line,

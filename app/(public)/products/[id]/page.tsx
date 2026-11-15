@@ -4,15 +4,14 @@ import { notFound } from "next/navigation";
 import { ArrowLeft, Package } from "lucide-react";
 
 import { prisma } from "@/lib/prisma";
-import { Badge } from "@/components/ui/badge";
 import { ProductGallery } from "@/components/public/ProductGallery";
-import { AddToCartButton } from "@/components/public/AddToCartButton";
-import { formatPrice } from "@/lib/utils";
+import { PurchaseOptions, type PurchaseOption } from "@/components/public/PurchaseOptions";
 
 export const dynamic = "force-dynamic";
 
 interface ProductDetailPageProps {
   params: { id: string };
+  searchParams: { option?: string };
 }
 
 export async function generateMetadata({ params }: ProductDetailPageProps): Promise<Metadata> {
@@ -24,13 +23,45 @@ export async function generateMetadata({ params }: ProductDetailPageProps): Prom
   return { title: product.name, description: product.description ?? undefined };
 }
 
-export default async function ProductDetailPage({ params }: ProductDetailPageProps) {
+export default async function ProductDetailPage({ params, searchParams }: ProductDetailPageProps) {
   const product = await prisma.product.findFirst({
     where: { id: params.id, isActive: true },
     include: { category: true },
   });
 
   if (!product) notFound();
+
+  // A single item links to its pack (packProductId); a pack is found by the reverse lookup.
+  const [pack, single] = await Promise.all([
+    product.packProductId
+      ? prisma.product.findFirst({ where: { id: product.packProductId, isActive: true } })
+      : null,
+    prisma.product.findFirst({ where: { packProductId: product.id, isActive: true } }),
+  ]);
+  const toInput = (p: { id: string; name: string; price: number; unit: string; imageUrl: string | null; stock: number }) => ({
+    productId: p.id,
+    name: p.name,
+    price: p.price,
+    unit: p.unit,
+    imageUrl: p.imageUrl,
+    stock: p.stock,
+  });
+  const options: PurchaseOption[] = pack
+    ? [
+        { label: "Single", product: toInput(product) },
+        { label: `Full set (${pack.unit})`, product: toInput(pack) },
+      ]
+    : single
+      ? [
+          { label: "Single", product: toInput(single) },
+          { label: `Full set (${product.unit})`, product: toInput(product) },
+        ]
+      : [{ label: product.unit, product: toInput(product) }];
+  // ?option=set keeps the "full set" choice selected when the customer switches colour.
+    const initialIndex = single ? 1 : searchParams.option === "set" && pack ? 1 : 0;
+
+  // Colours come from this product; a single and its pack fall back to each other's list.
+  const colors = product.colors.length ? product.colors : (single?.colors ?? pack?.colors ?? []);
 
   const gallery = [product.imageUrl, ...(product.images ?? [])].filter((url): url is string => Boolean(url));
 
@@ -62,36 +93,12 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
             {product.name}
           </h1>
 
-          <div className="flex items-center gap-3">
-            <p className="text-2xl font-semibold text-text-primary">
-              {formatPrice(product.price)}
-              <span className="ml-1 text-base font-normal text-text-secondary">
-                / {product.unit}
-              </span>
-            </p>
-            {product.stock > 0 ? (
-              <Badge variant="success">In Stock</Badge>
-            ) : (
-              <Badge variant="danger">Out of Stock</Badge>
-            )}
-          </div>
-
           {product.description && (
             <p className="text-base text-text-secondary">{product.description}</p>
           )}
 
           <div className="mt-2">
-            <AddToCartButton
-              variant="full"
-              product={{
-                productId: product.id,
-                name: product.name,
-                price: product.price,
-                unit: product.unit,
-                imageUrl: product.imageUrl,
-                stock: product.stock,
-              }}
-            />
+            <PurchaseOptions key={`${product.id}-${initialIndex}`} options={options} initial={initialIndex} colors={colors} />
           </div>
         </div>
       </div>

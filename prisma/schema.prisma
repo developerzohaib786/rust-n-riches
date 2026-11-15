@@ -33,6 +33,10 @@ model Product {
   categoryId  String
   category    Category    @relation(fields: [categoryId], references: [id])
   isActive    Boolean     @default(true)
+  colorGroup  String?     // legacy, no longer used (replaced by colors); safe to drop later
+  colorName   String?     // legacy, no longer used
+  colors      String[]    @default([]) // optional colour choices shown to customers, e.g. "Ruby Flame"
+  packProductId String?   // links a single item to its pack/stack product (e.g. 1 bangle -> pack of 4)
   createdAt   DateTime    @default(now())
   updatedAt   DateTime    @updatedAt
   orderItems  OrderItem[]
@@ -88,6 +92,7 @@ model OrderItem {
   product   Product @relation(fields: [productId], references: [id])
   name      String  // snapshot of the product name at time of order
   unit      String  // snapshot of the product unit at time of order
+  color     String? // colour the customer picked; null means default (none chosen)
   price     Float   // snapshot of the unit price at time of order
   quantity  Int
   total     Float

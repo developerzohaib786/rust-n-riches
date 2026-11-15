@@ -21,7 +21,7 @@ import {
 } from "@/components/ui/form";
 import { useToast } from "@/components/ui/use-toast";
 import { CartSummary } from "@/components/public/CartSummary";
-import { useCart, type ShippingRules } from "@/lib/cart";
+import { useCart, type ShippingRules, lineKey } from "@/lib/cart";
 import { calculateShipping, formatPrice } from "@/lib/utils";
 import { checkoutFormSchema, type CheckoutFormInput } from "@/lib/validations";
 
@@ -85,7 +85,11 @@ export function CheckoutForm() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           ...values,
-          items: lines.map((line) => ({ productId: line.productId, quantity: line.quantity })),
+          items: lines.map((line) => ({
+            productId: line.productId,
+            color: line.color ?? null,
+            quantity: line.quantity,
+          })),
           website: honeypot.current?.value ?? "",
         }),
       });
@@ -254,11 +258,12 @@ export function CheckoutForm() {
             </CardHeader>
             <CardContent className="flex flex-col gap-2 pt-0 text-sm">
               {lines.map((line) => (
-                <div key={line.productId} className="flex justify-between gap-3">
+                <div key={lineKey(line)} className="flex justify-between gap-3">
                   <span
                     className={line.unavailable ? "text-danger line-through" : "text-text-secondary"}
                   >
                     {line.quantity} × {line.name}
+                    {line.color ? ` (${line.color})` : ""}
                   </span>
                   <span className="shrink-0 text-text-primary">
                     {line.unavailable ? "Unavailable" : formatPrice(line.price * line.quantity)}

@@ -82,6 +82,9 @@ export default async function AdminOrderPage({ params }: AdminOrderPageProps) {
                   <span className="text-text-primary">
                     {item.quantity} × {item.name}
                   </span>{" "}
+                  <span className="rounded-full bg-muted px-2 py-0.5 text-xs font-medium text-text-primary">
+                    Color: {item.color ?? "Default"}
+                  </span>{" "}
                   ({formatPrice(item.price)} / {item.unit})
                 </span>
                 <span className="shrink-0 text-text-primary">{formatPrice(item.total)}</span>

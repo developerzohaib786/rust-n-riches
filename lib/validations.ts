@@ -18,6 +18,7 @@ export const productSchema = z.object({
     .nonnegative("Stock cannot be negative"),
   imageUrl: z.string().optional().or(z.literal("")),
   images: z.array(z.string()).optional(),
+  colors: z.array(z.string().trim().min(1).max(40, "Colour name is too long")).max(30, "Too many colours").optional(),
   categoryId: z.string().min(1, "Category is required"),
   isActive: z.boolean(),
 });
@@ -49,6 +50,8 @@ const phoneSchema = z
 
 export const checkoutItemSchema = z.object({
   productId: z.string().min(1),
+  // Optional colour choice; omitted means the default.
+  color: z.string().trim().max(40).nullish(),
   quantity: z
     .number()
     .int()

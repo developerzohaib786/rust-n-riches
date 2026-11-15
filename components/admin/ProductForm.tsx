@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Plus } from "lucide-react";
+import { Plus, X } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -57,6 +57,7 @@ const EMPTY_DEFAULTS: ProductInput = {
   stock: 0,
   imageUrl: "",
   images: [],
+  colors: [],
   categoryId: "",
   isActive: true,
 };
@@ -70,6 +71,7 @@ export function ProductForm({ mode, productId, categories: initialCategories, de
   const [newCategoryName, setNewCategoryName] = useState("");
   const [addingCategory, setAddingCategory] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  const [colorInput, setColorInput] = useState("");
 
   const form = useForm<ProductInput>({
     resolver: zodResolver(productSchema),
@@ -322,6 +324,61 @@ export function ProductForm({ mode, productId, categories: initialCategories, de
                         Add another photo
                       </Button>
                     </div>
+                    <FormMessage />
+                  </FormItem>
+                );
+              }}
+            />
+
+            <FormField
+              control={form.control}
+              name="colors"
+              render={({ field }) => {
+                const colors = field.value ?? [];
+                function addColor() {
+                  const value = colorInput.trim();
+                  if (!value) return;
+                  if (!colors.some((c) => c.toLowerCase() === value.toLowerCase())) {
+                    field.onChange([...colors, value]);
+                  }
+                  setColorInput("");
+                }
+                return (
+                  <FormItem>
+                    <FormLabel>Colors (optional)</FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder="Type a color and press Enter, e.g. Ruby Flame"
+                        value={colorInput}
+                        onChange={(e) => setColorInput(e.target.value)}
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter") {
+                            e.preventDefault(); // do not submit the product form
+                            addColor();
+                          }
+                        }}
+                      />
+                    </FormControl>
+                    {colors.length > 0 && (
+                      <div className="flex flex-wrap gap-2 pt-1">
+                        {colors.map((color) => (
+                          <span
+                            key={color}
+                            className="inline-flex items-center gap-1 rounded-full border border-border bg-muted px-3 py-1 text-sm"
+                          >
+                            {color}
+                            <button
+                              type="button"
+                              aria-label={`Remove ${color}`}
+                              className="text-text-secondary hover:text-danger"
+                              onClick={() => field.onChange(colors.filter((c) => c !== color))}
+                            >
+                              <X className="h-3.5 w-3.5" />
+                            </button>
+                          </span>
+                        ))}
+                      </div>
+                    )}
                     <FormMessage />
                   </FormItem>
                 );
