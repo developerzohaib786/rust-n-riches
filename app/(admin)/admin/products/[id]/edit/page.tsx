@@ -40,6 +40,7 @@ export default async function EditProductPage({
             imageUrl: product.imageUrl ?? "",
             images: product.images ?? [],
             colors: product.colors ?? [],
+            designs: (product.designs as { text: string; imageUrl: string }[] | null) ?? [],
             packSize: product.packSize,
             packPrice: product.packPrice,
             categoryId: product.categoryId,

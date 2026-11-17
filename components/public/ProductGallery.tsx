@@ -3,15 +3,18 @@
 import { useState } from "react";
 
 import { cn } from "@/lib/utils";
+import { useDesign } from "@/components/public/DesignContext";
 
 export function ProductGallery({ images, name }: { images: string[]; name: string }) {
   const [active, setActive] = useState(0);
+  const { design, setDesign } = useDesign();
+  const mainImage = design?.imageUrl || images[active];
 
   return (
     <div className="flex flex-col gap-3">
       <div className="aspect-square overflow-hidden rounded-xl border border-border bg-muted">
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src={images[active]} alt={name} className="h-full w-full object-cover" />
+        <img src={mainImage} alt={design ? `${name} - ${design.text}` : name} className="h-full w-full object-cover" />
       </div>
       {images.length > 1 && (
         <div className="grid grid-cols-5 gap-2">
@@ -19,11 +22,14 @@ export function ProductGallery({ images, name }: { images: string[]; name: strin
             <button
               key={url}
               type="button"
-              onClick={() => setActive(index)}
+              onClick={() => {
+                setActive(index);
+                setDesign(null);
+              }}
               aria-label={`Show photo ${index + 1}`}
               className={cn(
                 "aspect-square overflow-hidden rounded-lg border bg-muted",
-                index === active ? "border-primary ring-1 ring-primary" : "border-border",
+                !design && index === active ? "border-primary ring-1 ring-primary" : "border-border",
               )}
             >
               {/* eslint-disable-next-line @next/next/no-img-element */}

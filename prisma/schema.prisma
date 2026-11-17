@@ -36,6 +36,7 @@ model Product {
   colorGroup  String?     // legacy, no longer used (replaced by colors); safe to drop later
   colorName   String?     // legacy, no longer used
   colors      String[]    @default([]) // optional colour choices shown to customers, e.g. "Ruby Flame"
+  designs     Json        @default("[]") // [{ text, imageUrl }] design options; picking one swaps the big photo
   packProductId String?   // legacy, no longer used
   packSize    Int?        // optional pack: number of items in one pack, e.g. 4
   packPrice   Float?      // price of one pack

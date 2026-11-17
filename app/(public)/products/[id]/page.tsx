@@ -5,6 +5,7 @@ import { ArrowLeft, Package } from "lucide-react";
 
 import { prisma } from "@/lib/prisma";
 import { ProductGallery } from "@/components/public/ProductGallery";
+import { DesignProvider, type ProductDesign } from "@/components/public/DesignContext";
 import { PurchaseOptions, type PurchaseOption } from "@/components/public/PurchaseOptions";
 
 export const dynamic = "force-dynamic";
@@ -47,6 +48,7 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
       ]
     : [{ label: product.unit, product: toInput(false) }];
 
+  const designs = ((product.designs as unknown as ProductDesign[] | null) ?? []).filter((d) => d?.text && d?.imageUrl);
   const gallery = [product.imageUrl, ...(product.images ?? [])].filter((url): url is string => Boolean(url));
 
   return (
@@ -59,6 +61,7 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
         Back to Products
       </Link>
 
+      <DesignProvider>
       <div className="mt-6 grid grid-cols-1 gap-10 md:grid-cols-2">
         {gallery.length > 0 ? (
           <ProductGallery images={gallery} name={product.name} />
@@ -82,10 +85,11 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
           )}
 
           <div className="mt-2">
-            <PurchaseOptions options={options} colors={product.colors} />
+            <PurchaseOptions options={options} colors={product.colors} designs={designs} />
           </div>
         </div>
       </div>
+      </DesignProvider>
     </div>
   );
 }

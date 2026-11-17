@@ -19,6 +19,10 @@ export const productBaseSchema = z.object({
   imageUrl: z.string().optional().or(z.literal("")),
   images: z.array(z.string()).optional(),
   colors: z.array(z.string().trim().min(1).max(40, "Colour name is too long")).max(30, "Too many colours").optional(),
+  designs: z
+    .array(z.object({ text: z.string().trim().min(1, "Design text is required").max(60, "Design text is too long"), imageUrl: z.string().min(1, "Design image is required") }))
+    .max(30, "Too many designs")
+    .optional(),
   categoryId: z.string().min(1, "Category is required"),
   isActive: z.boolean(),
   // Optional pack: "pack of {packSize}" sold at packPrice. Both or neither.

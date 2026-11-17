@@ -58,6 +58,7 @@ const EMPTY_DEFAULTS: ProductInput = {
   imageUrl: "",
   images: [],
   colors: [],
+  designs: [],
   packSize: null,
   packPrice: null,
   categoryId: "",
@@ -79,6 +80,22 @@ export function ProductForm({ mode, productId, categories: initialCategories, de
     resolver: zodResolver(productSchema),
     defaultValues: { ...EMPTY_DEFAULTS, ...defaultValues },
   });
+
+  // Design text lives next to each photo; stored as [{ text, imageUrl }] keyed by the photo URL.
+  function designText(url: string) {
+    return (form.watch("designs") ?? []).find((d) => d.imageUrl === url)?.text ?? "";
+  }
+  function setDesignText(url: string, text: string) {
+    if (!url) return;
+    const rest = (form.getValues("designs") ?? []).filter((d) => d.imageUrl !== url);
+    form.setValue("designs", text.trim() ? [...rest, { text, imageUrl: url }] : rest, { shouldDirty: true });
+  }
+  // Keeps the design text attached when a photo is replaced or removed.
+  function moveDesignText(from: string, to: string) {
+    const text = designText(from);
+    const rest = (form.getValues("designs") ?? []).filter((d) => d.imageUrl !== from);
+    form.setValue("designs", text && to ? [...rest, { text, imageUrl: to }] : rest, { shouldDirty: true });
+  }
 
   async function handleAddCategory() {
     if (!newCategoryName.trim()) return;
@@ -117,7 +134,10 @@ export function ProductForm({ mode, productId, categories: initialCategories, de
       const res = await fetch(url, {
         method,
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...values, images: (values.images ?? []).filter(Boolean) }),
+        body: JSON.stringify({ ...values, images: (values.images ?? []).filter(Boolean),
+          designs: (values.designs ?? []).filter(
+            (d) => d.text.trim() && (d.imageUrl === values.imageUrl || (values.images ?? []).includes(d.imageUrl)),
+          ) }),
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.message ?? "Failed to save product");
@@ -333,8 +353,21 @@ export function ProductForm({ mode, productId, categories: initialCategories, de
                 <FormItem>
                   <FormLabel>Product Image</FormLabel>
                   <FormControl>
-                    <ImageUploadField value={field.value ?? ""} onChange={field.onChange} />
+                    <ImageUploadField
+                      value={field.value ?? ""}
+                      onChange={(next) => {
+                        moveDesignText(field.value ?? "", next);
+                        field.onChange(next);
+                      }}
+                    />
                   </FormControl>
+                  {field.value && (
+                    <Input
+                      placeholder="Design text for this photo (optional), e.g. Floral"
+                      value={designText(field.value)}
+                      onChange={(e) => setDesignText(field.value ?? "", e.target.value)}
+                    />
+                  )}
                   <FormMessage />
                 </FormItem>
               )}
@@ -350,15 +383,24 @@ export function ProductForm({ mode, productId, categories: initialCategories, de
                     <FormLabel>More Photos</FormLabel>
                     <div className="flex flex-col gap-4">
                       {images.map((url, index) => (
-                        <ImageUploadField
-                          key={index}
-                          value={url}
-                          onChange={(next) =>
-                            field.onChange(
-                              next ? images.map((u, i) => (i === index ? next : u)) : images.filter((_, i) => i !== index),
-                            )
-                          }
-                        />
+                        <div key={index} className="flex flex-col gap-2">
+                          <ImageUploadField
+                            value={url}
+                            onChange={(next) => {
+                              moveDesignText(url, next);
+                              field.onChange(
+                                next ? images.map((u, i) => (i === index ? next : u)) : images.filter((_, i) => i !== index),
+                              );
+                            }}
+                          />
+                          {url && (
+                            <Input
+                              placeholder="Design text for this photo (optional)"
+                              value={designText(url)}
+                              onChange={(e) => setDesignText(url, e.target.value)}
+                            />
+                          )}
+                        </div>
                       ))}
                       <Button
                         type="button"

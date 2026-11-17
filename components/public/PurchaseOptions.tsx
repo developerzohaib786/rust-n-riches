@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { AddToCartButton } from "@/components/public/AddToCartButton";
 import { formatPrice } from "@/lib/utils";
 import type { CartProductInput } from "@/lib/cart";
+import { useDesign, type ProductDesign } from "@/components/public/DesignContext";
 
 export interface PurchaseOption {
   label: string; // e.g. "Single" or "Full set (pack of 4)"
@@ -17,11 +18,14 @@ export function PurchaseOptions({
   options,
   initial = 0,
   colors = [],
+  designs = [],
 }: {
   options: PurchaseOption[];
   initial?: number;
   colors?: string[];
+  designs?: ProductDesign[];
 }) {
+  const { design, setDesign } = useDesign();
   const [selected, setSelected] = useState(initial);
   // Optional: no colour selected means the default.
   const [color, setColor] = useState<string | null>(null);
@@ -52,6 +56,35 @@ export function PurchaseOptions({
                   }`}
                 >
                   {name}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
+      {designs.length > 0 && (
+        <div>
+          <p className="mb-2 text-sm text-text-secondary">
+            Designs{design ? `: ${design.text}` : ""}
+          </p>
+          <div className="flex flex-wrap gap-2" role="radiogroup" aria-label="Designs">
+            {designs.map((d) => {
+              const active = design?.text === d.text;
+              return (
+                <button
+                  key={d.text}
+                  type="button"
+                  role="radio"
+                  aria-checked={active}
+                  onClick={() => setDesign(active ? null : d)}
+                  className={`rounded-full border px-4 py-2 text-sm transition ${
+                    active
+                      ? "border-primary bg-primary text-white"
+                      : "border-border bg-surface text-text-primary hover:border-primary"
+                  }`}
+                >
+                  {d.text}
                 </button>
               );
             })}
