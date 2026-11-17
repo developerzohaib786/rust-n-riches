@@ -96,6 +96,7 @@ model OrderItem {
   name      String  // snapshot of the product name at time of order
   unit      String  // snapshot of the product unit at time of order
   color     String? // colour the customer picked; null means default (none chosen)
+  design    String? // design text the customer picked; null means none
   packSize  Int?    // set when bought as a pack: items in one pack (quantity counts packs)
   price     Float   // snapshot of the unit price at time of order
   quantity  Int

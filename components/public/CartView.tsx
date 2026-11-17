@@ -89,6 +89,9 @@ export function CartView() {
                     {line.color && (
                       <p className="text-sm text-text-secondary">Color: {line.color}</p>
                     )}
+                    {line.design && (
+                      <p className="text-sm text-text-secondary">Design: {line.design}</p>
+                    )}
                   </div>
                   <button
                     type="button"

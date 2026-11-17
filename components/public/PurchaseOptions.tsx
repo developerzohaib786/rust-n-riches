@@ -127,9 +127,9 @@ export function PurchaseOptions({
       </div>
 
       <AddToCartButton
-        key={`${product.productId}-${color ?? ""}`}
+        key={`${product.productId}-${color ?? ""}-${design?.text ?? ""}`}
         variant="full"
-        product={{ ...product, color }}
+        product={{ ...product, color, design: design?.text ?? null }}
       />
     </div>
   );

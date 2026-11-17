@@ -30,7 +30,7 @@ function whatsappNumber(phone: string) {
 
 export default async function AdminOrderPage({ params }: AdminOrderPageProps) {
   const [order, settings] = await Promise.all([
-    prisma.order.findUnique({ where: { id: params.id }, include: { items: true } }),
+    prisma.order.findUnique({ where: { id: params.id }, include: { items: { include: { product: { select: { designs: true } } } } } }),
     prisma.storeSettings.findUnique({ where: { id: "store" } }),
   ]);
 
@@ -78,15 +78,36 @@ export default async function AdminOrderPage({ params }: AdminOrderPageProps) {
           <CardContent className="flex flex-col gap-3 pt-0 text-sm">
             {order.items.map((item) => (
               <div key={item.id} className="flex justify-between gap-4">
-                <span className="text-text-secondary">
-                  <span className="text-text-primary">
-                    {item.quantity} × {item.name}
-                  </span>{" "}
-                  <span className="rounded-full bg-muted px-2 py-0.5 text-xs font-medium text-text-primary">
-                    Color: {item.color ?? "Default"}
-                  </span>{" "}
-                  ({formatPrice(item.price)} / {item.unit})
-                </span>
+                <div className="flex gap-3">
+                  {(() => {
+                    const designs = (item.product.designs as unknown as { text: string; imageUrl: string }[] | null) ?? [];
+                    const image = item.design ? designs.find((d) => d.text === item.design)?.imageUrl : null;
+                    return image ? (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img
+                        src={image}
+                        alt={item.design ?? ""}
+                        className="h-20 w-20 shrink-0 rounded-lg border border-border object-cover"
+                      />
+                    ) : null;
+                  })()}
+                  <span className="text-text-secondary">
+                    <span className="text-text-primary">
+                      {item.quantity} × {item.name}
+                    </span>{" "}
+                    <span className="rounded-full bg-muted px-2 py-0.5 text-xs font-medium text-text-primary">
+                      Color: {item.color ?? "Default"}
+                    </span>{" "}
+                    {item.design && (
+                      <>
+                        <span className="rounded-full bg-muted px-2 py-0.5 text-xs font-medium text-text-primary">
+                          Design: {item.design}
+                        </span>{" "}
+                      </>
+                    )}
+                    ({formatPrice(item.price)} / {item.unit})
+                  </span>
+                </div>
                 <span className="shrink-0 text-text-primary">{formatPrice(item.total)}</span>
               </div>
             ))}

@@ -88,6 +88,7 @@ export function CheckoutForm() {
           items: lines.map((line) => ({
             productId: line.productId,
             color: line.color ?? null,
+            design: line.design ?? null,
             pack: Boolean(line.packSize),
             quantity: line.quantity,
           })),
@@ -265,6 +266,7 @@ export function CheckoutForm() {
                   >
                     {line.quantity} × {line.name}
                     {line.color ? ` (${line.color})` : ""}
+                    {line.design ? ` (${line.design})` : ""}
                   </span>
                   <span className="shrink-0 text-text-primary">
                     {line.unavailable ? "Unavailable" : formatPrice(line.price * line.quantity)}

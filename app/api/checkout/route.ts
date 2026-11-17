@@ -45,15 +45,16 @@ export async function POST(request: Request) {
   // means the default. Duplicate lines are merged so stock is checked against the total.
   const lineQuantities = new Map<
     string,
-    { productId: string; color: string | null; pack: boolean; quantity: number }
+    { productId: string; color: string | null; design: string | null; pack: boolean; quantity: number }
   >();
   for (const item of items) {
     const color = item.color?.trim() || null;
+    const design = item.design?.trim() || null;
     const pack = item.pack === true;
-    const key = `${item.productId}::${color ?? ""}::${pack ? "pack" : ""}`;
+    const key = `${item.productId}::${color ?? ""}::${design ?? ""}::${pack ? "pack" : ""}`;
     const line = lineQuantities.get(key);
     if (line) line.quantity += item.quantity;
-    else lineQuantities.set(key, { productId: item.productId, color, pack, quantity: item.quantity });
+    else lineQuantities.set(key, { productId: item.productId, color, design, pack, quantity: item.quantity });
   }
   const productIds = Array.from(new Set(items.map((item) => item.productId)));
 
@@ -105,7 +106,7 @@ export async function POST(request: Request) {
           }
         }
 
-        const orderItems = lines.map(({ productId, color, pack, quantity }) => {
+        const orderItems = lines.map(({ productId, color, design, pack, quantity }) => {
           const product = productsById.get(productId)!;
           const price = pack ? product.packPrice! : product.price;
           return {
@@ -113,6 +114,11 @@ export async function POST(request: Request) {
             name: pack ? `${product.name} (Pack of ${product.packSize})` : product.name,
             unit: pack ? `pack of ${product.packSize}` : product.unit,
             color: color ? product.colors.find((c) => c.toLowerCase() === color.toLowerCase()) ?? color : null,
+            design: design
+              ? ((product.designs as unknown as { text: string }[] | null) ?? []).find(
+                  (d) => d.text.toLowerCase() === design.toLowerCase(),
+                )?.text ?? design
+              : null,
             packSize: pack ? product.packSize : null,
             price,
             quantity,

@@ -13,6 +13,8 @@ export interface CartLine {
   stock: number;
   // Optional colour chosen by the customer; null/undefined means the default.
   color?: string | null;
+  // Optional design (text of a product photo) chosen by the customer.
+  design?: string | null;
   // Set when this line is the product's pack: pieces per pack. price/unit are the pack's.
   // Quantity then counts packs, and stock (in pieces) is shared with the single option.
   packSize?: number | null;
@@ -43,8 +45,8 @@ interface CartContextValue {
 const STORAGE_KEY = "aqsaura-cart-v1";
 
 // A cart line is identified by product + colour, so the same product in two colours is two lines.
-export function lineKey(line: { productId: string; color?: string | null; packSize?: number | null }) {
-  return `${line.productId}::${line.color ?? ""}::${line.packSize ?? ""}`;
+export function lineKey(line: { productId: string; color?: string | null; design?: string | null; packSize?: number | null }) {
+  return `${line.productId}::${line.color ?? ""}::${line.design ?? ""}::${line.packSize ?? ""}`;
 }
 
 // Pieces of stock one unit of this line uses (a pack uses packSize pieces).

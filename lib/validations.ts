@@ -64,6 +64,7 @@ export const checkoutItemSchema = z.object({
   productId: z.string().min(1),
   // Optional colour choice; omitted means the default.
   color: z.string().trim().max(40).nullish(),
+  design: z.string().trim().max(60).nullish(),
   // true when bought as the product's pack (price and size come from the database).
   pack: z.boolean().optional(),
   quantity: z
